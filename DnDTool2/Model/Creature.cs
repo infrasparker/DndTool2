@@ -200,7 +200,8 @@ namespace DnDTool2.Model
 
         public Creature(string name, int strScore, int dexScore, int conScore, int intScore, int wisScore, int chaScore) : this(name, CreatureType.HUMANOID,
                         Alignment.U, CreatureSize.MEDIUM, 1, new Die(6), 3, null, "", 10, false, false, 10, 30, 0, 0, 0, false, 10, 10, 10, 10, 10, 10,
-                        new ChallengeRating(0, 0, 2), false, false, false, false, false, false) { }
+                        new ChallengeRating(0, 0, 2), false, false, false, false, false, false, false, false, false, false, false, false, false, false,
+                        false, false, false, false, false, false, false, false, false) { }
 
         //public Creature(string name, CreatureSize size, CreatureType type, Alignment align, ChallengeRating cr, string natArmor, int ac, int amtHD, 
         //                int speed, int swim, int climb, int burrow, int fly, int profBonus, int natArmorAC, bool shield, bool useNatArmor,
