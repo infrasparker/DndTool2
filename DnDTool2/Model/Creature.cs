@@ -332,7 +332,7 @@ namespace DnDTool2.Model
 
         public void CalcHP()
         {
-            this.HP = (int)(this.AmtHD * (this.HD.Average + this.ConMod));
+            this.HP = (int)Math.Floor(this.AmtHD * (this.HD.Average + this.ConMod));
         }
 
         public void CalcAC()

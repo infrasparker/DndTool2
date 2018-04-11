@@ -15,6 +15,10 @@ namespace DnDTool2.ViewModel
         public List<Alignment> Alignments { get; set; }
         public List<Armor> Armors { get; set; }
         public List<ChallengeRating> CRs { get; set; }
+        public List<string> Skills { get; set; }
+
+        private string displayedSkill;
+        public string DisplayedSkill { get => displayedSkill; set { displayedSkill = value; OnPropertyChanged("DisplayedSkill"); } }
 
         public ObservableCollection<Creature> creatures;
 
@@ -28,6 +32,10 @@ namespace DnDTool2.ViewModel
             Alignments = Enum.GetValues(typeof(Alignment)).Cast<Alignment>().ToList();
             Armors = Armor.GetStandardArmors();
             CRs = ChallengeRating.GetStandardCRs();
+            Skills = new List<string> { "Athletics", "Acrobatics", "Sleight of Hand", "Stealth", "Arcana", "History",
+                "Investigation", "Nature", "Religion", "Animal Handling", "Insight", "Medicine", "Perception", "Survival",
+                "Deception", "Intimidation", "Performance", "Persuasion"};
+            DisplayedSkill = "Athletics";
 
             this.Creature = new Creature("Creature Name");
         }
