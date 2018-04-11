@@ -1,0 +1,26 @@
+﻿<Page x:Class="DnDTool2.View.MonsterManual"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:DnDTool2.View"
+      mc:Ignorable="d" 
+      d:DesignHeight="690" d:DesignWidth="1280"
+      Title="MonsterManual">
+
+    <Grid Margin="10">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+
+        <Button Content="Add Creature" HorizontalAlignment="Center" VerticalAlignment="Top" Command="{Binding OpenAddCreatureCommand}"/>
+
+        <DataGrid Grid.Column="1" ItemsSource="{Binding Creatures}" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Creature Name" Binding="{Binding Name}"/>
+                <DataGridTextColumn Header="CR" Binding="{Binding CR.ChallengeRatingNumber}"/>
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</Page>
