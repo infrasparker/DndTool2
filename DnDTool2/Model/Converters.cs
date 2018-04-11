@@ -182,4 +182,17 @@ namespace DnDTool2.Model
             throw new NotSupportedException();
         }
     }
+
+    public class SkillProficiencyTypeBooleanConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return value.Equals(Enum.Parse(value.GetType(), (string)parameter));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            return Enum.Parse(targetType, (string)parameter);
+        }
+    }
 }

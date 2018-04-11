@@ -20,5 +20,13 @@ namespace DnDTool2.Model
             //    handler(this, new PropertyChangedEventArgs(property_name));
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(property_name));
         }
+
+        protected void PropertyUpdateList(List<string> props)
+        {
+            foreach (string s in props)
+            {
+                OnPropertyChanged(s);
+            }
+        }
     }
 }

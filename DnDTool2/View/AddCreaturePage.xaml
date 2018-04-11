@@ -17,6 +17,7 @@
         <model:ModEquationConverter x:Key="ModEquationConverter"/>
         <model:ModDisplayConverter x:Key="ModDisplayConverter"/>
         <model:ChallengeRatingNumberConverter x:Key="ChallengeRatingNumberConverter"/>
+        <model:SkillProficiencyTypeBooleanConverter x:Key="SkillProficiencyTypeBooleanConverter"/>
     </Page.Resources>
     
     <Grid>
@@ -291,7 +292,229 @@
                 <Label Content="{Binding Creature.WisSave}" Grid.Column="11"/>
                 <ToggleButton Content="Charisma" Grid.Column="12" IsChecked="{Binding Creature.ChaSaveProf}"/>
                 <Label Content="{Binding Creature.ChaSave}" Grid.Column="13"/>
+            </Grid>
 
+            <Grid Style="{Binding Spacing}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Skills" VerticalAlignment="Center"/>
+
+                <Grid Grid.Column="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="150"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                        <RowDefinition Height="5"/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Label Content="Athletics" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1">
+                        <RadioButton Content="None" GroupName="Athletics" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Athletics" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Athletics"
+                                     IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Athletics, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2"/>
+
+                    <Label Content="Acrobatics" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3">
+                        <RadioButton Content="None" GroupName="Acrobatics" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Acrobatics" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Acrobatics"
+                                     IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Acrobatics, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4"/>
+
+                    <Label Content="Sleight of Hand" Grid.Column="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="5">
+                        <RadioButton Content="None" GroupName="SleightOfHand" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="SleightOfHand" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="SleightOfHand"
+                                     IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.SleightOfHand, Converter={StaticResource ModDisplayConverter}}" Grid.Column="6"/>
+
+                    <Label Content="Stealth" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="2">
+                        <RadioButton Content="None" GroupName="Stealth" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Stealth" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Stealth"
+                                     IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Stealth, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2" Grid.Row="2"/>
+
+                    <Label Content="Arcana" Grid.Column="2" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3" Grid.Row="2">
+                        <RadioButton Content="None" GroupName="Arcana" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Arcana" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Arcana"
+                                     IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Arcana, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4" Grid.Row="2"/>
+
+                    <Label Content="History" Grid.Column="4" Grid.Row="2" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="5" Grid.Row="2">
+                        <RadioButton Content="None" GroupName="History" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="History" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="History"
+                                     IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.History, Converter={StaticResource ModDisplayConverter}}" Grid.Column="6" Grid.Row="2"/>
+
+                    <Label Content="Investigation" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="4">
+                        <RadioButton Content="None" GroupName="Investigation" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Investigation" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Investigation"
+                                     IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Investigation, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2" Grid.Row="4"/>
+
+                    <Label Content="Nature" Grid.Column="2" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3" Grid.Row="4">
+                        <RadioButton Content="None" GroupName="Nature" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Nature" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Nature"
+                                     IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Nature, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4" Grid.Row="4"/>
+
+                    <Label Content="Religion" Grid.Column="4" Grid.Row="4" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="5" Grid.Row="4">
+                        <RadioButton Content="None" GroupName="Religion" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Religion" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Religion"
+                                     IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Religion, Converter={StaticResource ModDisplayConverter}}" Grid.Column="6" Grid.Row="4"/>
+
+                    <Label Content="Animal Handling" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="6">
+                        <RadioButton Content="None" GroupName="AnimalHandling" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="AnimalHandling" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="AnimalHandling"
+                                     IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.AnimalHandling, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2" Grid.Row="6"/>
+
+                    <Label Content="Insight" Grid.Column="2" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3" Grid.Row="6">
+                        <RadioButton Content="None" GroupName="Insight" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Insight" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Insight"
+                                     IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Insight, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4" Grid.Row="6"/>
+
+                    <Label Content="Medicine" Grid.Column="4" Grid.Row="6" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="5" Grid.Row="6">
+                        <RadioButton Content="None" GroupName="Medicine" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Medicine" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Medicine"
+                                     IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Medicine, Converter={StaticResource ModDisplayConverter}}" Grid.Column="6" Grid.Row="6"/>
+
+                    <Label Content="Survival" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="8">
+                        <RadioButton Content="None" GroupName="Survival" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Survival" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Survival"
+                                     IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Survival, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2" Grid.Row="8"/>
+
+                    <Label Content="Deception" Grid.Column="2" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3" Grid.Row="8">
+                        <RadioButton Content="None" GroupName="Deception" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Deception" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Deception"
+                                     IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Deception, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4" Grid.Row="8"/>
+
+                    <Label Content="Intimidation" Grid.Column="4" Grid.Row="8" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="5" Grid.Row="8">
+                        <RadioButton Content="None" GroupName="Intimidation" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Intimidation" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Intimidation"
+                                     IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Intimidation, Converter={StaticResource ModDisplayConverter}}" Grid.Column="6" Grid.Row="8"/>
+
+                    <Label Content="Performance" Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="1" Grid.Row="10">
+                        <RadioButton Content="None" GroupName="Performance" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Performance" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Performance"
+                                     IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Performance, Converter={StaticResource ModDisplayConverter}}" Grid.Column="2" Grid.Row="10"/>
+
+                    <Label Content="Persuasion" Grid.Column="2" Grid.Row="10" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                    <StackPanel Grid.Column="3" Grid.Row="10">
+                        <RadioButton Content="None" GroupName="Persuasion" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Proficiency" GroupName="Persuasion" Margin="0, 0, 0, 2"
+                                     IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                        <RadioButton Content="Expertise" GroupName="Persuasion"
+                                     IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    </StackPanel>
+                    <Label Content="{Binding Creature.Persuasion, Converter={StaticResource ModDisplayConverter}}" Grid.Column="4" Grid.Row="10"/>
+                </Grid>
+                
             </Grid>
         </StackPanel>
     </Grid>
