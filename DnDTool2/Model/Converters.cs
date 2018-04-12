@@ -22,6 +22,48 @@ namespace DnDTool2.Model
         }
     }
 
+    public class SkillTypeEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string s = Enum.GetName(value.GetType(), value);
+            switch (s)
+            {
+                case "SLEIGHT_OF_HAND":
+                    return "Sleight of Hand";
+                case "ANIMAL_HANDLING":
+                    return "Animal Handling";
+                default:
+                    return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class DamageTypeEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string s = Enum.GetName(value.GetType(), value);
+            switch (s)
+            {
+                case "NONMAGICAL":
+                    return "Nonmagical piercing, slashing, or bludgeoning";
+                default:
+                    return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class AlignmentEnumConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -183,7 +225,7 @@ namespace DnDTool2.Model
         }
     }
 
-    public class SkillProficiencyTypeBooleanConverter : IValueConverter
+    public class EnumComparatorToBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
@@ -196,11 +238,11 @@ namespace DnDTool2.Model
         }
     }
 
-    public class StringComparatorToVisibilityConverter : IValueConverter
+    public class EnumComparatorToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value.Equals(parameter))
+            if (value.Equals(Enum.Parse(value.GetType(), (string)parameter)))
                 return Visibility.Visible;
             else
                 return Visibility.Hidden;

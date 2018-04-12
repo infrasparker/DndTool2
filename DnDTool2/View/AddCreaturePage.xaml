@@ -17,8 +17,10 @@
         <model:ModEquationConverter x:Key="ModEquationConverter"/>
         <model:ModDisplayConverter x:Key="ModDisplayConverter"/>
         <model:ChallengeRatingNumberConverter x:Key="ChallengeRatingNumberConverter"/>
-        <model:SkillProficiencyTypeBooleanConverter x:Key="SkillProficiencyTypeBooleanConverter"/>
-        <model:StringComparatorToVisibilityConverter x:Key="StringComparatorToVisibilityConverter"/>
+        <model:EnumComparatorToBooleanConverter x:Key="EnumComparatorToBooleanConverter"/>
+        <model:EnumComparatorToVisibilityConverter x:Key="EnumComparatorToVisibilityConverter"/>
+        <model:SkillTypeEnumConverter x:Key="SkillTypeEnumConverter"/>
+        <model:DamageTypeEnumConverter x:Key="DamageTypeEnumConverter"/>
     </Page.Resources>
     
     <Grid>
@@ -265,7 +267,7 @@
             <Grid Style="{StaticResource Spacing}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="20"/>
+                    <ColumnDefinition Width="50"/>
                     <ColumnDefinition Width="80"/>
                     <ColumnDefinition/>
                     <ColumnDefinition Width="80"/>
@@ -282,238 +284,334 @@
 
                 <Label Content="Saving Throws"/>
                 <ToggleButton Content="Strength" Grid.Column="2" IsChecked="{Binding Creature.StrSaveProf}"/>
-                <Label Content="{Binding Creature.StrSave}" Grid.Column="3"/>
+                <Label Content="{Binding Path=Creature.StrSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="3"/>
                 <ToggleButton Content="Dexterity" Grid.Column="4" IsChecked="{Binding Creature.DexSaveProf}"/>
-                <Label Content="{Binding Creature.DexSave}" Grid.Column="5"/>
+                <Label Content="{Binding Path=Creature.DexSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="5"/>
                 <ToggleButton Content="Constitution" Grid.Column="6" IsChecked="{Binding Creature.ConSaveProf}"/>
-                <Label Content="{Binding Creature.ConSave}" Grid.Column="7"/>
+                <Label Content="{Binding Path=Creature.ConSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"/>
                 <ToggleButton Content="Intelligence" Grid.Column="8" IsChecked="{Binding Creature.IntSaveProf}"/>
-                <Label Content="{Binding Creature.IntSave}" Grid.Column="9"/>
+                <Label Content="{Binding Path=Creature.IntSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="9"/>
                 <ToggleButton Content="Wisdom" Grid.Column="10" IsChecked="{Binding Creature.WisSaveProf}"/>
-                <Label Content="{Binding Creature.WisSave}" Grid.Column="11"/>
+                <Label Content="{Binding Path=Creature.WisSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="11"/>
                 <ToggleButton Content="Charisma" Grid.Column="12" IsChecked="{Binding Creature.ChaSaveProf}"/>
-                <Label Content="{Binding Creature.ChaSave}" Grid.Column="13"/>
+                <Label Content="{Binding Path=Creature.ChaSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="13"/>
             </Grid>
 
-            <Grid Style="{Binding Spacing}">
+            <Grid Style="{StaticResource Spacing}">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="100"/>
                     <ColumnDefinition/>
                 </Grid.ColumnDefinitions>
 
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+
                 <Label Content="Skills" VerticalAlignment="Center"/>
-                <Label Content="Skill" Grid.Column="1" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="2" ItemsSource="{Binding Skills}" SelectedValue="{Binding DisplayedSkill}"/>
+
+                <Grid Grid.Column="1" Style="{StaticResource Spacing}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="300"/>
+                        <ColumnDefinition Width="50"/>
+                        <ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="90"/>
+                        <ColumnDefinition Width="60"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Skill" HorizontalAlignment="Right"/>
+                    <ComboBox Grid.Column="1" ItemsSource="{Binding Skills}" SelectedValue="{Binding DisplayedSkill}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource SkillTypeEnumConverter}}"/>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+
+                    <RadioButton Content="None" GroupName="Athletics" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
+                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Athletics" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
+                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Athletics" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
+                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Athletics, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"/>
+
+                    <RadioButton Content="None" GroupName="Acrobatics" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
+                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Acrobatics" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
+                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Acrobatics" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
+                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Acrobatics, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"/>
+
+                    <RadioButton Content="None" GroupName="Sleight of Hand" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
+                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Sleight of Hand" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
+                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Sleight of Hand" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
+                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.SleightOfHand, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"/>
+
+                    <RadioButton Content="None" GroupName="Stealth" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
+                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Stealth" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
+                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Stealth" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
+                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Stealth, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"/>
+
+                    <RadioButton Content="None" GroupName="Arcana" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
+                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Arcana" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
+                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Arcana" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
+                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Arcana, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"/>
+
+                    <RadioButton Content="None" GroupName="History" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
+                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="History" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
+                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="History" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
+                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.History, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"/>
+
+                    <RadioButton Content="None" GroupName="Investigation" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
+                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Investigation" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
+                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Investigation" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
+                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Investigation, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"/>
+
+                    <RadioButton Content="None" GroupName="Nature" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
+                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Nature" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
+                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Nature" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
+                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Nature, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"/>
+
+                    <RadioButton Content="None" GroupName="Religion" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
+                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Religion" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
+                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Religion" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
+                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Religion, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"/>
+
+                    <RadioButton Content="None" GroupName="Animal Handling" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
+                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Animal Handling" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
+                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Animal Handling" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
+                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.AnimalHandling, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"/>
+
+                    <RadioButton Content="None" GroupName="Insight" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
+                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Insight" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
+                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Insight" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
+                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Insight, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"/>
+
+                    <RadioButton Content="None" GroupName="Medicine" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
+                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Medicine" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
+                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Medicine" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
+                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Medicine, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"/>
+
+                    <RadioButton Content="None" GroupName="Perception" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
+                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Perception" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
+                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Perception" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
+                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Perception, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"/>
+
+                    <RadioButton Content="None" GroupName="Survival" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
+                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Survival" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
+                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Survival" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
+                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Survival, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"/>
+
+                    <RadioButton Content="None" GroupName="Deception" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
+                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Deception" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
+                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Deception" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
+                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Deception, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"/>
+
+                    <RadioButton Content="None" GroupName="Intimidation" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
+                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Intimidation" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
+                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Intimidation" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
+                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Intimidation, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"/>
+
+                    <RadioButton Content="None" GroupName="Performance" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
+                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Performance" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
+                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Performance" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
+                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Performance, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"/>
+
+                    <RadioButton Content="None" GroupName="Persuasion" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
+                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                    <RadioButton Content="Proficiency" GroupName="Persuasion" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
+                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
+                    <RadioButton Content="Expertise" GroupName="Persuasion" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
+                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
+                    <TextBox Text="{Binding Creature.Persuasion, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
+                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"/>
+                </Grid>
+
+                <Grid Grid.Column="1" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="100"/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
+
+                    <Label Content="Skills" HorizontalAlignment="Right"/>
+                    <TextBox Text="{Binding Creature.SkillList, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
+                </Grid>
                 
-                <RadioButton Content="None" GroupName="Athletics" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Athletics'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Athletics" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Athletics'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Athletics" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Athletics'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Athletics, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Athletics'}"/>
-
-                <RadioButton Content="None" GroupName="Acrobatics" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Acrobatics'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Acrobatics" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Acrobatics'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Acrobatics" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Acrobatics'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Acrobatics, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Acrobatics'}"/>
-
-                <RadioButton Content="None" GroupName="Sleight of Hand" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Sleight of Hand'}"
-                             IsChecked="{Binding Path=Creature.SleightofHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Sleight of Hand" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Sleight of Hand'}"
-                             IsChecked="{Binding Path=Creature.SleightofHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Sleight of Hand" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Sleight of Hand'}"
-                             IsChecked="{Binding Path=Creature.SleightofHandProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.SleightofHand, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Sleight of Hand'}"/>
-
-                <RadioButton Content="None" GroupName="Stealth" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Stealth'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Stealth" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Stealth'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Stealth" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Stealth'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Stealth, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Stealth'}"/>
-
-                <RadioButton Content="None" GroupName="Arcana" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Arcana'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Arcana" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Arcana'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Arcana" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Arcana'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Arcana, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Arcana'}"/>
-
-                <RadioButton Content="None" GroupName="History" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='History'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="History" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='History'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="History" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='History'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.History, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='History'}"/>
-
-                <RadioButton Content="None" GroupName="Investigation" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Investigation'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Investigation" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Investigation'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Investigation" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Investigation'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Investigation, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Investigation'}"/>
-
-                <RadioButton Content="None" GroupName="Nature" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Nature'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Nature" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Nature'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Nature" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Nature'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Nature, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Nature'}"/>
-
-                <RadioButton Content="None" GroupName="Religion" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Religion'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Religion" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Religion'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Religion" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Religion'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Religion, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Religion'}"/>
-
-                <RadioButton Content="None" GroupName="Animal Handling" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Animal Handling'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Animal Handling" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Animal Handling'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Animal Handling" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Animal Handling'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.AnimalHandling, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Animal Handling'}"/>
-
-                <RadioButton Content="None" GroupName="Insight" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Insight'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Insight" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Insight'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Insight" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Insight'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Insight, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Insight'}"/>
-
-                <RadioButton Content="None" GroupName="Medicine" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Medicine'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Medicine" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Medicine'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Medicine" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Medicine'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Medicine, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Medicine'}"/>
-
-                <RadioButton Content="None" GroupName="Survival" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Survival'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Survival" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Survival'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Survival" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Survival'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Survival, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Survival'}"/>
-
-                <RadioButton Content="None" GroupName="Deception" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Deception'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Deception" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Deception'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Deception" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Deception'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Deception, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Deception'}"/>
-
-                <RadioButton Content="None" GroupName="Intimidation" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Intimidation'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Intimidation" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Intimidation'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Intimidation" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Intimidation'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Intimidation, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Intimidation'}"/>
-
-                <RadioButton Content="None" GroupName="Performance" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Performance'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Performance" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Performance'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Performance" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Performance'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Performance, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Performance'}"/>
-
-                <RadioButton Content="None" GroupName="Persuasion" Grid.Column="3" HorizontalAlignment="Right" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Persuasion'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=NONE}"/>
-                <RadioButton Content="Proficiency" GroupName="Persuasion" Grid.Column="4" HorizontalAlignment="Center"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Persuasion'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                <RadioButton Content="Expertise" GroupName="Persuasion" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Persuasion'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource SkillProficiencyTypeBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                <Label Content="{Binding Creature.Persuasion, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource StringComparatorToVisibilityConverter}, ConverterParameter='Persuasion'}"/>
             </Grid>
+
+            <Grid Style="{StaticResource Spacing}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="140"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+
+                <Label Content="Damage Effects" VerticalAlignment="Center"/>
+
+                <Grid Grid.Column="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition/>
+                        <RowDefinition/>
+                    </Grid.RowDefinitions>
+
+                    <Grid Style="{StaticResource Spacing}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="300"/>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="70"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="90"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="Damage Type" HorizontalAlignment="Right"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding DamageTypes}" SelectedValue="{Binding DisplayedDamage}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource DamageTypeEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+
+                        <RadioButton Content="None" GroupName="Acid" Grid.Column="3" HorizontalAlignment="Left" 
+                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
+                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
+                        <RadioButton Content="Vulnerability" GroupName="Acid" Grid.Column="4" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
+                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=VULNERABILITY}"/>
+                        <RadioButton Content="Resistance" GroupName="Acid" Grid.Column="5" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
+                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=RESISTANCE}"/>
+                        <RadioButton Content="Immunity" GroupName="Acid" Grid.Column="6" HorizontalAlignment="Left"
+                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
+                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=IMMUNITY}"/>
+                    </Grid>
+                </Grid>
+                
+                
+            </Grid>
+
         </StackPanel>
     </Grid>
 </Page>
