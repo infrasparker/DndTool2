@@ -7,7 +7,7 @@
         xmlns:model="clr-namespace:DnDTool2.Model"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="AddCreaturePage" Height="970" Width="1000">
+        Title="AddCreaturePage" Height="610" Width="800">
 
     <Page.Resources>
         <model:GenericEnumConverter x:Key="GenericEnumConverter"/>
@@ -17,601 +17,314 @@
         <model:ModEquationConverter x:Key="ModEquationConverter"/>
         <model:ModDisplayConverter x:Key="ModDisplayConverter"/>
         <model:ChallengeRatingNumberConverter x:Key="ChallengeRatingNumberConverter"/>
-        <model:EnumComparatorToBooleanConverter x:Key="EnumComparatorToBooleanConverter"/>
-        <model:EnumComparatorToVisibilityConverter x:Key="EnumComparatorToVisibilityConverter"/>
-        <model:SkillTypeEnumConverter x:Key="SkillTypeEnumConverter"/>
-        <model:DamageTypeEnumConverter x:Key="DamageTypeEnumConverter"/>
+        <model:SkillProficiencyTypeBooleanConverter x:Key="SkillProficiencyTypeBooleanConverter"/>
+        <model:StringComparatorToVisibilityConverter x:Key="StringComparatorToVisibilityConverter"/>
     </Page.Resources>
     
     <Grid>
-        <Rectangle Fill="#FF505050" Width="150" HorizontalAlignment="Left"/>
-        <StackPanel Margin="10">
-            <StackPanel.Resources>
-                <Style TargetType="FrameworkElement" x:Key="Spacing">
-                    <Setter Property="Margin" Value="0, 0, 0, 5"/>
+        <mah:MetroAnimatedTabControl>
+            <mah:MetroAnimatedTabControl.Resources>
+                <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
+                    <Setter Property="mah:ControlsHelper.HeaderFontSize" Value="15"/>
                 </Style>
-            </StackPanel.Resources>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="60"/>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                
-                <Label Content="Creature Information"/>
-                <Label Content="Creature Name" Grid.Column="1" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="2" Text="{Binding Creature.Name}"/>
-                <Label Content="Type" Grid.Column="3" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="4" ItemsSource="{Binding CreatureTypes}" SelectedItem="{Binding Path=Creature.Type}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Label Content="Alignment" Grid.Column="5" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="6" ItemsSource="{Binding Alignments}" SelectedItem="{Binding Path=Creature.Alignment}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource AlignmentEnumConverter}}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="120"/>
-                    <ColumnDefinition Width="60"/>
-                    <ColumnDefinition Width="75"/>
-                    <ColumnDefinition Width="20"/>
-                    <ColumnDefinition Width="25"/>
-                    <ColumnDefinition Width="250"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Size and Hit Points"/>
-                <Label Content="Size" Grid.Column="1" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="2" ItemsSource="{Binding CreatureSizes}" SelectedItem="{Binding Creature.Size}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-                <Label Content="Hit Dice" Grid.Column="3" HorizontalAlignment="Right"/>
-                <mah:NumericUpDown Grid.Column="4" Value="{Binding Creature.AmtHD}" Minimum="1"/>
-                <Label Content="d" Grid.Column="5" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="6" Text="{Binding Creature.HD.Faces}" IsReadOnly="True"/>
-                <Label Content="Hit Points" Grid.Column="7" HorizontalAlignment="Right"/>
-                <TextBox Grid.Column="8" IsReadOnly="True">
-                    <TextBox.Text>
-                        <MultiBinding StringFormat="{}{0}d{1} ({2}) {3} * {0}">
-                            <Binding Path="Creature.AmtHD"/>
-                            <Binding Path="Creature.HD.Faces"/>
-                            <Binding Path="Creature.HD.Average"/>
-                            <Binding Path="Creature.ConMod" Mode="OneWay" Converter="{StaticResource ModEquationConverter}"/>
-                        </MultiBinding>
-                    </TextBox.Text>
-                </TextBox>
-                <TextBox Text="{Binding Creature.HP}" Grid.Column="10" IsReadOnly="True"/>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="300"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="5"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="195"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Armor"/>
-                <Label Content="Armor Source" Grid.Column="1" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="2" ItemsSource="{Binding Armors}" DisplayMemberPath="Name" SelectedItem="{Binding Creature.ArmorSource}"
-                          Visibility="{Binding Creature.NatArmor, Converter={StaticResource BooleanToVisibilityInvertedConverter}}"/>
-                <Grid Grid.Column="2" Visibility="{Binding Creature.NatArmor, Converter={StaticResource BooleanToVisibilityConverter}}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="70"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <TextBox Text="{Binding Creature.NatArmorSource}"/>
-                    <Label Content="Base AC" Grid.Column="1" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="2" Value="{Binding Creature.NatArmorAC}" Minimum="10" InterceptManualEnter="False"/>
-                </Grid>
-                <ToggleButton Grid.Column="4" Content="Natural Armor" IsChecked="{Binding Creature.NatArmor}"/>
-                <ToggleButton Content="Shield" Grid.Column="6" IsChecked="{Binding Creature.Shield}"/>
-                <Label Content="Armor Class" Grid.Column="7" HorizontalAlignment="Right"/>
-                <TextBox Text="{Binding Creature.AC}" Grid.Column="8" IsReadOnly="True"/>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Movement" VerticalAlignment="Center"/>
-
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-
-                    <Label Content="Speed" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="1" Value="{Binding Creature.Speed}" Minimum="0" Interval="5"/>
-                    <Label Content="ft." Grid.Column="2"/>
-                    <Label Content="Climb" Grid.Column="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="3" Value="{Binding Creature.Climb}" Minimum="0" Interval="5"/>
-                    <Label Content="ft." Grid.Column="4"/>
-                    <Label Content="Swim" Grid.Column="4" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="5" Value="{Binding Creature.Swim}" Minimum="0" Interval="5"/>
-                    <Label Content="ft." Grid.Column="6"/>
-
-                    <Label Content="Burrow" Grid.Row="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Creature.Burrow}" Minimum="0" Interval="5"/>
-                    <Label Content="ft." Grid.Row="2" Grid.Column="2"/>
-                    <Label Content="Fly" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding Creature.Fly}" Minimum="0" Interval="5"/>
-                    <Label Content="ft." Grid.Row="2" Grid.Column="4"/>
-                    <ToggleButton Content="Hover" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Center" IsChecked="{Binding Creature.Hover}"/>
-                </Grid>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Ability Scores" VerticalAlignment="Center"/>
-
-                <Grid Grid.Column="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="150"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="30"/>
-                        <RowDefinition Height="5"/>
-                        <RowDefinition Height="30"/>
-                    </Grid.RowDefinitions>
-
-                    <Label Content="Strength" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="1" Value="{Binding Creature.StrScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.StrMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Column="2"/>
-                    <Label Content="Dexterity" Grid.Column="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="3" Value="{Binding Creature.DexScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.DexMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Column="4"/>
-                    <Label Content="Constitution" Grid.Column="4" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Column="5" Value="{Binding Creature.ConScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.ConMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Column="6"/>
-
-                    <Label Content="Intelligence" Grid.Row="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Row="2" Grid.Column="1" Value="{Binding Creature.IntScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.IntMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Row="2" Grid.Column="2"/>
-                    <Label Content="Wisdom" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Row="2" Grid.Column="3" Value="{Binding Creature.WisScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.WisMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Row="2" Grid.Column="4"/>
-                    <Label Content="Charisma" Grid.Row="2" Grid.Column="4" HorizontalAlignment="Right"/>
-                    <mah:NumericUpDown Grid.Row="2" Grid.Column="5" Value="{Binding Creature.ChaScore}" Minimum="1"/>
-                    <Label Content="{Binding Path=Creature.ChaMod, Converter={StaticResource ModDisplayConverter}}" ContentStringFormat="({0})" Grid.Row="2" Grid.Column="6"/>
-                </Grid>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition Width="150"/>
-                    <ColumnDefinition Width="200"/>
-                    <ColumnDefinition Width="100"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                
-                <Label Content="Challenge Rating"/>
-                <Label Content="Challenge Rating" Grid.Column="1" HorizontalAlignment="Right"/>
-                <ComboBox Grid.Column="2" ItemsSource="{Binding CRs}" SelectedValue="{Binding Creature.CR}">
-                    <ComboBox.ItemTemplate>
-                        <DataTemplate>
-                            <TextBlock>
-                                <TextBlock.Text>
-                                    <MultiBinding StringFormat="{}{0} ({1}) +{2}">
-                                        <Binding Path="CR" Converter="{StaticResource ChallengeRatingNumberConverter}"/>
-                                        <Binding Path="Exp"/>
-                                        <Binding Path="ProfBonus"/>
-                                    </MultiBinding>
-                                </TextBlock.Text>
-                            </TextBlock>
-                        </DataTemplate>
-                    </ComboBox.ItemTemplate>
-                </ComboBox>
-
-                <Label Content="Proficiency Bonus" Grid.Column="3" HorizontalAlignment="Right"/>
-                <TextBox Text="{Binding Creature.CR.ProfBonus}" Grid.Column="4" IsReadOnly="True"/>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition Width="50"/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                    <ColumnDefinition Width="80"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Saving Throws"/>
-                <ToggleButton Content="Strength" Grid.Column="2" IsChecked="{Binding Creature.StrSaveProf}"/>
-                <Label Content="{Binding Path=Creature.StrSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="3"/>
-                <ToggleButton Content="Dexterity" Grid.Column="4" IsChecked="{Binding Creature.DexSaveProf}"/>
-                <Label Content="{Binding Path=Creature.DexSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="5"/>
-                <ToggleButton Content="Constitution" Grid.Column="6" IsChecked="{Binding Creature.ConSaveProf}"/>
-                <Label Content="{Binding Path=Creature.ConSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7"/>
-                <ToggleButton Content="Intelligence" Grid.Column="8" IsChecked="{Binding Creature.IntSaveProf}"/>
-                <Label Content="{Binding Path=Creature.IntSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="9"/>
-                <ToggleButton Content="Wisdom" Grid.Column="10" IsChecked="{Binding Creature.WisSaveProf}"/>
-                <Label Content="{Binding Path=Creature.WisSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="11"/>
-                <ToggleButton Content="Charisma" Grid.Column="12" IsChecked="{Binding Creature.ChaSaveProf}"/>
-                <Label Content="{Binding Path=Creature.ChaSave, Converter={StaticResource ModDisplayConverter}}" Grid.Column="13"/>
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Grid.RowDefinitions>
-                    <RowDefinition/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-
-                <Label Content="Skills" VerticalAlignment="Center"/>
-
-                <Grid Grid.Column="1" Style="{StaticResource Spacing}">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="300"/>
-                        <ColumnDefinition Width="50"/>
-                        <ColumnDefinition Width="70"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="90"/>
-                        <ColumnDefinition Width="60"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <Label Content="Skill" HorizontalAlignment="Right"/>
-                    <ComboBox Grid.Column="1" ItemsSource="{Binding Skills}" SelectedValue="{Binding DisplayedSkill}">
-                        <ComboBox.ItemTemplate>
-                            <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource SkillTypeEnumConverter}}"/>
-                            </DataTemplate>
-                        </ComboBox.ItemTemplate>
-                    </ComboBox>
-
-                    <RadioButton Content="None" GroupName="Athletics" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Athletics" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Athletics" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"
-                             IsChecked="{Binding Path=Creature.AthleticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Athletics, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ATHLETICS'}"/>
-
-                    <RadioButton Content="None" GroupName="Acrobatics" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Acrobatics" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Acrobatics" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"
-                             IsChecked="{Binding Path=Creature.AcrobaticsProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Acrobatics, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACROBATICS'}"/>
-
-                    <RadioButton Content="None" GroupName="Sleight of Hand" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
-                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Sleight of Hand" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
-                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Sleight of Hand" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"
-                             IsChecked="{Binding Path=Creature.SleightOfHandProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.SleightOfHand, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SLEIGHT_OF_HAND'}"/>
-
-                    <RadioButton Content="None" GroupName="Stealth" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Stealth" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Stealth" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"
-                             IsChecked="{Binding Path=Creature.StealthProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Stealth, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='STEALTH'}"/>
-
-                    <RadioButton Content="None" GroupName="Arcana" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Arcana" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Arcana" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"
-                             IsChecked="{Binding Path=Creature.ArcanaProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Arcana, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ARCANA'}"/>
-
-                    <RadioButton Content="None" GroupName="History" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="History" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="History" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"
-                             IsChecked="{Binding Path=Creature.HistoryProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.History, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='HISTORY'}"/>
-
-                    <RadioButton Content="None" GroupName="Investigation" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Investigation" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Investigation" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"
-                             IsChecked="{Binding Path=Creature.InvestigationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Investigation, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INVESTIGATION'}"/>
-
-                    <RadioButton Content="None" GroupName="Nature" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Nature" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Nature" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"
-                             IsChecked="{Binding Path=Creature.NatureProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Nature, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='NATURE'}"/>
-
-                    <RadioButton Content="None" GroupName="Religion" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Religion" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Religion" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"
-                             IsChecked="{Binding Path=Creature.ReligionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Religion, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='RELIGION'}"/>
-
-                    <RadioButton Content="None" GroupName="Animal Handling" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Animal Handling" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Animal Handling" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"
-                             IsChecked="{Binding Path=Creature.AnimalHandlingProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.AnimalHandling, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ANIMAL_HANDLING'}"/>
-
-                    <RadioButton Content="None" GroupName="Insight" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Insight" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Insight" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"
-                             IsChecked="{Binding Path=Creature.InsightProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Insight, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INSIGHT'}"/>
-
-                    <RadioButton Content="None" GroupName="Medicine" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Medicine" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Medicine" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"
-                             IsChecked="{Binding Path=Creature.MedicineProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Medicine, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MEDICINE'}"/>
-
-                    <RadioButton Content="None" GroupName="Perception" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
-                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Perception" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
-                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Perception" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"
-                             IsChecked="{Binding Path=Creature.PerceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Perception, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERCEPTION'}"/>
-
-                    <RadioButton Content="None" GroupName="Survival" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Survival" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Survival" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"
-                             IsChecked="{Binding Path=Creature.SurvivalProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Survival, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='SURVIVAL'}"/>
-
-                    <RadioButton Content="None" GroupName="Deception" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Deception" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Deception" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"
-                             IsChecked="{Binding Path=Creature.DeceptionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Deception, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='DECEPTION'}"/>
-
-                    <RadioButton Content="None" GroupName="Intimidation" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Intimidation" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Intimidation" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"
-                             IsChecked="{Binding Path=Creature.IntimidationProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Intimidation, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='INTIMIDATION'}"/>
-
-                    <RadioButton Content="None" GroupName="Performance" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Performance" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Performance" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"
-                             IsChecked="{Binding Path=Creature.PerformanceProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Performance, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERFORMANCE'}"/>
-
-                    <RadioButton Content="None" GroupName="Persuasion" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                    <RadioButton Content="Proficiency" GroupName="Persuasion" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=PROFICIENCY}"/>
-                    <RadioButton Content="Expertise" GroupName="Persuasion" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"
-                             IsChecked="{Binding Path=Creature.PersuasionProf, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=EXPERTISE}"/>
-                    <TextBox Text="{Binding Creature.Persuasion, Mode=OneWay, Converter={StaticResource ModDisplayConverter}}" Grid.Column="7" IsReadOnly="True"
-                       Visibility="{Binding Path=DisplayedSkill, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='PERSUASION'}"/>
-                </Grid>
-
-                <Grid Grid.Column="1" Grid.Row="1">
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition/>
-                    </Grid.ColumnDefinitions>
-
-                    <Label Content="Skills" HorizontalAlignment="Right"/>
-                    <TextBox Text="{Binding Creature.SkillList, Mode=OneWay}" Grid.Column="1" IsReadOnly="True"/>
-                </Grid>
-                
-            </Grid>
-
-            <Grid Style="{StaticResource Spacing}">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="140"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-
-                <Label Content="Damage Effects" VerticalAlignment="Center"/>
-
-                <Grid Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-
-                    <Grid Style="{StaticResource Spacing}">
+                <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource {x:Type Separator}}">
+                    <Setter Property="Width" Value="750"/>
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Background" Value="LightGray"/>
+                </Style>
+                <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                    <!--<Setter Property="Margin" Value="0, 0, 20, 0"/>-->
+                    <Setter Property="Width" Value="100"/>
+                </Style>
+                <Style TargetType="FrameworkElement" x:Key="Spacing">
+                    <Setter Property="Margin" Value="30, 0, 30, 0"/>
+                </Style>
+            </mah:MetroAnimatedTabControl.Resources>
+            <TabItem Header="Information and Statistics">
+                <StackPanel>
+                    <Separator Background="Red"/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The name of the creature.">
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="300"/>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="70"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="90"/>
                             <ColumnDefinition Width="100"/>
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
-                        <Label Content="Damage Type" HorizontalAlignment="Right"/>
-                        <ComboBox Grid.Column="1" ItemsSource="{Binding DamageTypes}" SelectedValue="{Binding DisplayedDamage}">
+
+                        <Label Content="Name"/>
+                        <TextBox Grid.Column="1" Text="{Binding Creature.Name}"/>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The size of the creature, which corresponds directly to the amount of faces on its hit dice.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Size"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding CreatureSizes}" SelectedItem="{Binding Creature.Size}">
                             <ComboBox.ItemTemplate>
                                 <DataTemplate>
-                                    <TextBlock Text="{Binding Converter={StaticResource DamageTypeEnumConverter}}"/>
+                                    <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
                                 </DataTemplate>
                             </ComboBox.ItemTemplate>
                         </ComboBox>
-
-                        <RadioButton Content="None" GroupName="Acid" Grid.Column="3" HorizontalAlignment="Left" 
-                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
-                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=NONE}"/>
-                        <RadioButton Content="Vulnerability" GroupName="Acid" Grid.Column="4" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
-                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=VULNERABILITY}"/>
-                        <RadioButton Content="Resistance" GroupName="Acid" Grid.Column="5" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
-                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=RESISTANCE}"/>
-                        <RadioButton Content="Immunity" GroupName="Acid" Grid.Column="6" HorizontalAlignment="Left"
-                             Visibility="{Binding Path=DisplayedDamage, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ACID'}"
-                             IsChecked="{Binding Path=Creature.Acid, Converter={StaticResource EnumComparatorToBooleanConverter}, ConverterParameter=IMMUNITY}"/>
+                        <Label Grid.Column="2" Content="Hit Die" HorizontalAlignment="Right"/>
+                        <TextBox Grid.Column="3" IsReadOnly="True">
+                            <TextBox.Text>
+                                <Binding Path="Creature.HD.Faces" StringFormat="{}d{0}"/>
+                            </TextBox.Text>
+                        </TextBox>
                     </Grid>
-                </Grid>
-                
-                
-            </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The type of the creature.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
 
-        </StackPanel>
+                        <Label Content="Type"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding CreatureTypes}" SelectedItem="{Binding Creature.Type}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The alignment of the creature.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Alignment"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Alignments}" SelectedItem="{Binding Creature.Alignment}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource AlignmentEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                    
+                    <Separator Background="Red"/>
+                    <Grid Margin="30, 0, 30, 5" ToolTip="The sources of the creatures armor class.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Armor Sources"/>
+                        <ToggleButton Grid.Column="1" Content="Natural Armor" IsChecked="{Binding Creature.NaturalArmor}"/>
+                        <ToggleButton Grid.Column="2" Content="Shield" IsChecked="{Binding Creature.Shield}"/>
+                        <ToggleButton Grid.Column="3" Content="Mage Armor" IsChecked="{Binding Creature.MageArmor}"/>
+                        <ToggleButton Grid.Column="4" Content="Barkskin" IsChecked="{Binding Creature.Barkskin}"/>
+                    </Grid>
+                    <Grid Margin="30, 0, 30, 5">
+                        <Grid Visibility="{Binding Creature.NaturalArmor, Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Armor"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Armors}" SelectedItem="{Binding Creature.Armor}"/>
+                        </Grid>
+
+                        <Grid Visibility="{Binding Creature.NaturalArmor, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Natural Armor"/>
+                            <mah:NumericUpDown Grid.Column="1" Minimum="10" Value="{Binding Creature.NaturalArmorAC}"/>
+                        </Grid>
+
+                    </Grid>
+                    <Grid Style="{StaticResource Spacing}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Armor Class"/>
+                        <TextBox Grid.Column="1" Text="{Binding Creature.AC, Mode=OneWay}"/>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="Hit points and hit dice. Hit dice type is determined by creature size.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Hit Dice"/>
+                        <mah:NumericUpDown Grid.Column="1" Minimum="1" Value="{Binding Creature.HDCount}"/>
+                        <TextBox Grid.Column="2" Margin="5, 0, 0, 0" IsReadOnly="True">
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Creature.HD" Mode="OneWay"/>
+                                    <Binding Path="Creature.HD.Average" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Grid.Column="3" HorizontalAlignment="Right" Content="Hit Points"/>
+                        <TextBox Grid.Column="4" IsReadOnly="True">
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Creature.HP" Mode="OneWay"/>
+                                    <Binding Path="Creature.HPCalculation" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="Movement speeds in feet.">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            </Style>
+                        </Grid.Resources>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Speed"/>
+                        <DockPanel Grid.Row="1">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="0" Interval="5" Value="{Binding Creature.Speed}"/>
+                        </DockPanel>
+                        <Label Grid.Column="1" Content="Burrow"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Burrow}"/>
+                        </DockPanel>
+                        <Label Grid.Column="2" Content="Climb"/>
+                        <DockPanel Grid.Row="1" Grid.Column="2">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Climb}"/>
+                        </DockPanel>
+                        <Label Grid.Column="3" Content="Swim"/>
+                        <DockPanel Grid.Row="1" Grid.Column="3">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Swim}"/>
+                        </DockPanel>
+                        <DockPanel Grid.Column="4">
+                            <Label DockPanel.Dock="Left" Content="Fly"/>
+                            <CheckBox DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Hover"/>
+                        </DockPanel>
+                        <DockPanel Grid.Row="1" Grid.Column="4">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Fly}"/>
+                        </DockPanel>
+                    </Grid>
+                    <Separator Background="Red"/>
+                    
+                    <Grid Style="{StaticResource Spacing}">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}">
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Strength"/>
+                        <DockPanel Grid.Row="1">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.StrengthMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.StrengthScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="1" Content="Dexterity"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.DexterityMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.DexterityScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="2" Content="Constitution"/>
+                        <DockPanel Grid.Row="1" Grid.Column="2">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.ConstitutionMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.ConstitutionScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="3" Content="Intelligence"/>
+                        <DockPanel Grid.Row="1" Grid.Column="3">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.IntelligenceMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.IntelligenceScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="4" Content="Wisdom"/>
+                        <DockPanel Grid.Row="1" Grid.Column="4">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.WisdomMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.WisdomScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="5" Content="Charisma"/>
+                        <DockPanel Grid.Row="1" Grid.Column="5">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.CharismaMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.CharismaScore}"/>
+                        </DockPanel>
+                    </Grid>
+                    <Separator Background="Red"/>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Statistics">
+                <StackPanel>
+
+                </StackPanel>
+            </TabItem>
+
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Abilities">
+                
+            </TabItem>
+
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Actions">
+                
+            </TabItem>
+        </mah:MetroAnimatedTabControl>
     </Grid>
 </Page>

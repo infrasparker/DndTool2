@@ -15,14 +15,10 @@ namespace DnDTool2.ViewModel
         public List<Alignment> Alignments { get; set; }
         public List<Armor> Armors { get; set; }
         public List<ChallengeRating> CRs { get; set; }
-        public List<SkillType> Skills { get; set; }
-        public List<DamageType> DamageTypes { get; set; }
+        public List<string> Skills { get; set; }
 
-        private SkillType displayedSkill;
-        public SkillType DisplayedSkill { get => displayedSkill; set { displayedSkill = value; OnPropertyChanged("DisplayedSkill"); } }
-
-        private DamageType displayedDamage;
-        public DamageType DisplayedDamage { get => displayedDamage; set { displayedDamage = value; OnPropertyChanged("DisplayedDamage"); } }
+        private string displayedSkill;
+        public string DisplayedSkill { get => displayedSkill; set { displayedSkill = value; OnPropertyChanged("DisplayedSkill"); } }
 
         public ObservableCollection<Creature> creatures;
 
@@ -36,10 +32,10 @@ namespace DnDTool2.ViewModel
             Alignments = Enum.GetValues(typeof(Alignment)).Cast<Alignment>().ToList();
             Armors = Armor.GetStandardArmors();
             CRs = ChallengeRating.GetStandardCRs();
-            Skills = Enum.GetValues(typeof(SkillType)).Cast<SkillType>().ToList();
-            DamageTypes = Enum.GetValues(typeof(DamageType)).Cast<DamageType>().ToList();
+            Skills = Creature.GetSkillNames().ToList();
+            DisplayedSkill = "Athletics";
 
-            this.Creature = new Creature("Creature Name");
+            this.Creature = new Creature("Creature Name", 10, 10, 10, 10, 10, 10);
         }
     }
 }

@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DnDTool2.View"
         mc:Ignorable="d"
-        Title="AddCreatureWindow" Height="1000" Width="1000"
+        Title="AddCreatureWindow" Height="640" Width="800"
         WindowStartupLocation="CenterScreen">
     <Grid>
         <Frame Name="DisplayFrame" NavigationUIVisibility="Hidden"/>

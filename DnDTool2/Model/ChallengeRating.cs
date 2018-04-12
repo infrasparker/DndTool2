@@ -6,27 +6,16 @@ using System.Threading.Tasks;
 
 namespace DnDTool2.Model
 {
-    public enum ChallengeRatingNumber
-    {
-        ZERO, ONE_EIGHTH, ONE_FOURTH, ONE_HALF, ONE, TWO, THREE, FOUR, FIVE, SIX, SEVEN, EIGHT, NINE, TEN, ELEVEN,
-        TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN, TWENTY, TWENTY_ONE, TWENTY_TWO,
-        TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE, THIRTY
-    }
-
     public class ChallengeRating
     {
-        private ChallengeRatingNumber cr;
-        private int exp, profBonus;
+        public ChallengeRatingNumber cr;
+        public int exp, proficiencyBonus;
 
-        public ChallengeRatingNumber CR { get => cr; set => cr = value; }
-        public int Exp { get => exp; set => exp = value; }
-        public int ProfBonus { get => profBonus; set => profBonus = value; }
-
-        public ChallengeRating(ChallengeRatingNumber cr, int exp, int profBonus)
+        public ChallengeRating(ChallengeRatingNumber cr, int exp, int proficiencyBonus)
         {
-            this.CR = cr;
-            this.Exp = exp;
-            this.ProfBonus = profBonus;
+            this.cr = cr;
+            this.exp = exp;
+            this.proficiencyBonus = proficiencyBonus;
         }
 
         public static List<ChallengeRating> GetStandardCRs()
@@ -44,6 +33,22 @@ namespace DnDTool2.Model
                 ret.Add(new ChallengeRating(CRs[i], exps[i], profs[i]));
             }
             return ret;
+        }
+
+        public override string ToString() {
+            switch (cr)
+            {
+                case ChallengeRatingNumber.ZERO:
+                    return "0";
+                case ChallengeRatingNumber.ONE_EIGHTH:
+                    return "1/8";
+                case ChallengeRatingNumber.ONE_FOURTH:
+                    return "1/4";
+                case ChallengeRatingNumber.ONE_HALF:
+                    return "1/2";
+                default:
+                    return ((int)cr - 3).ToString();
+            }
         }
     }
 }

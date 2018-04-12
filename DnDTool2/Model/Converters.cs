@@ -200,7 +200,7 @@ namespace DnDTool2.Model
             if ((bool)value)
                 return Visibility.Visible;
             else
-                return Visibility.Hidden;
+                return Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -214,7 +214,7 @@ namespace DnDTool2.Model
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
             if ((bool)value)
-                return Visibility.Hidden;
+                return Visibility.Collapsed;
             else
                 return Visibility.Visible;
         }

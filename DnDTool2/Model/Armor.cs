@@ -8,7 +8,7 @@ namespace DnDTool2.Model
 {
     public enum ArmorType
     {
-        LIGHT, MEDIUM, HEAVY, SHIELD
+        LIGHT, MEDIUM, HEAVY, SHIELD, NONE
     }
 
     public class Armor : Item
@@ -42,10 +42,16 @@ namespace DnDTool2.Model
         // No details including cost and weight, used for generic creation
         public Armor(string name, ArmorType type, int baseAC) : this(name, 0, 0, type, baseAC) { }
 
+        public override string ToString()
+        {
+            return Name;
+        }
+
         public static List<Armor> GetStandardArmors()
         {
             return new List<Armor>
             {
+                new Armor("None", ArmorType.NONE, 10),
                 new Armor("Padded", 500, 8, ArmorType.LIGHT, 11, true),
                 new Armor("Leather", 1000, 10, ArmorType.LIGHT, 11),
                 new Armor("Studded Leather", 4500, 13, ArmorType.LIGHT, 12),
