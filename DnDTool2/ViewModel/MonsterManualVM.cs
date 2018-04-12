@@ -21,7 +21,7 @@ namespace DnDTool2.ViewModel
         {
             Creatures = new ObservableCollection<Creature>
             {
-                new Creature("Dragon")
+                new Creature("Dragon", 10, 10, 10, 10, 10, 10)
             };
             OpenAddCreatureCommand = new RelayCommand(OpenAddCreature);
         }

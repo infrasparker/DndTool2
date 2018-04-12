@@ -7,7 +7,7 @@
         xmlns:model="clr-namespace:DnDTool2.Model"
         xmlns:mah="http://metro.mahapps.com/winfx/xaml/controls"
         mc:Ignorable="d"
-        Title="AddCreaturePage" Height="450" Width="640">
+        Title="AddCreaturePage" Height="610" Width="800">
 
     <Page.Resources>
         <model:GenericEnumConverter x:Key="GenericEnumConverter"/>
@@ -22,22 +22,308 @@
     </Page.Resources>
     
     <Grid>
-        <mah:MetroAnimatedTabControl TabStripPlacement="Left">
+        <mah:MetroAnimatedTabControl>
             <mah:MetroAnimatedTabControl.Resources>
                 <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
-                    <Setter Property="mah:ControlsHelper.HeaderFontSize" Value="12"/>
+                    <Setter Property="mah:ControlsHelper.HeaderFontSize" Value="15"/>
+                </Style>
+                <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource {x:Type Separator}}">
+                    <Setter Property="Width" Value="750"/>
+                    <Setter Property="Height" Value="10"/>
+                    <Setter Property="Background" Value="LightGray"/>
+                </Style>
+                <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                    <!--<Setter Property="Margin" Value="0, 0, 20, 0"/>-->
+                    <Setter Property="Width" Value="100"/>
+                </Style>
+                <Style TargetType="FrameworkElement" x:Key="Spacing">
+                    <Setter Property="Margin" Value="30, 0, 30, 0"/>
                 </Style>
             </mah:MetroAnimatedTabControl.Resources>
-            <TabItem Header="Creature Information">
-                <Grid>
+            <TabItem Header="Information and Statistics">
+                <StackPanel>
+                    <Separator Background="Red"/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The name of the creature.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Name"/>
+                        <TextBox Grid.Column="1" Text="{Binding Creature.Name}"/>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The size of the creature, which corresponds directly to the amount of faces on its hit dice.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="50"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Size"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding CreatureSizes}" SelectedItem="{Binding Creature.Size}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                        <Label Grid.Column="2" Content="Hit Die" HorizontalAlignment="Right"/>
+                        <TextBox Grid.Column="3" IsReadOnly="True">
+                            <TextBox.Text>
+                                <Binding Path="Creature.HD.Faces" StringFormat="{}d{0}"/>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The type of the creature.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Type"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding CreatureTypes}" SelectedItem="{Binding Creature.Type}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="The alignment of the creature.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Alignment"/>
+                        <ComboBox Grid.Column="1" ItemsSource="{Binding Alignments}" SelectedItem="{Binding Creature.Alignment}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Converter={StaticResource AlignmentEnumConverter}}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </Grid>
                     
-                </Grid>
+                    <Separator Background="Red"/>
+                    <Grid Margin="30, 0, 30, 5" ToolTip="The sources of the creatures armor class.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Armor Sources"/>
+                        <ToggleButton Grid.Column="1" Content="Natural Armor" IsChecked="{Binding Creature.NaturalArmor}"/>
+                        <ToggleButton Grid.Column="2" Content="Shield" IsChecked="{Binding Creature.Shield}"/>
+                        <ToggleButton Grid.Column="3" Content="Mage Armor" IsChecked="{Binding Creature.MageArmor}"/>
+                        <ToggleButton Grid.Column="4" Content="Barkskin" IsChecked="{Binding Creature.Barkskin}"/>
+                    </Grid>
+                    <Grid Margin="30, 0, 30, 5">
+                        <Grid Visibility="{Binding Creature.NaturalArmor, Converter={StaticResource BooleanToVisibilityInvertedConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Armor"/>
+                            <ComboBox Grid.Column="1" ItemsSource="{Binding Armors}" SelectedItem="{Binding Creature.Armor}"/>
+                        </Grid>
+
+                        <Grid Visibility="{Binding Creature.NaturalArmor, Converter={StaticResource BooleanToVisibilityConverter}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Content="Natural Armor"/>
+                            <mah:NumericUpDown Grid.Column="1" Minimum="10" Value="{Binding Creature.NaturalArmorAC}"/>
+                        </Grid>
+
+                    </Grid>
+                    <Grid Style="{StaticResource Spacing}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Armor Class"/>
+                        <TextBox Grid.Column="1" Text="{Binding Creature.AC, Mode=OneWay}"/>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="Hit points and hit dice. Hit dice type is determined by creature size.">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="80"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="Hit Dice"/>
+                        <mah:NumericUpDown Grid.Column="1" Minimum="1" Value="{Binding Creature.HDCount}"/>
+                        <TextBox Grid.Column="2" Margin="5, 0, 0, 0" IsReadOnly="True">
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Creature.HD" Mode="OneWay"/>
+                                    <Binding Path="Creature.HD.Average" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                        <Label Grid.Column="3" HorizontalAlignment="Right" Content="Hit Points"/>
+                        <TextBox Grid.Column="4" IsReadOnly="True">
+                            <TextBox.Text>
+                                <MultiBinding StringFormat="{}{0} ({1})">
+                                    <Binding Path="Creature.HP" Mode="OneWay"/>
+                                    <Binding Path="Creature.HPCalculation" Mode="OneWay"/>
+                                </MultiBinding>
+                            </TextBox.Text>
+                        </TextBox>
+                    </Grid>
+                    <Separator/>
+                    <Grid Style="{StaticResource Spacing}" ToolTip="Movement speeds in feet.">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type ToggleButton}" BasedOn="{StaticResource {x:Type ToggleButton}}">
+                                <Setter Property="HorizontalAlignment" Value="Stretch"/>
+                            </Style>
+                        </Grid.Resources>
+                        
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Speed"/>
+                        <DockPanel Grid.Row="1">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="0" Interval="5" Value="{Binding Creature.Speed}"/>
+                        </DockPanel>
+                        <Label Grid.Column="1" Content="Burrow"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Burrow}"/>
+                        </DockPanel>
+                        <Label Grid.Column="2" Content="Climb"/>
+                        <DockPanel Grid.Row="1" Grid.Column="2">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Climb}"/>
+                        </DockPanel>
+                        <Label Grid.Column="3" Content="Swim"/>
+                        <DockPanel Grid.Row="1" Grid.Column="3">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Swim}"/>
+                        </DockPanel>
+                        <DockPanel Grid.Column="4">
+                            <Label DockPanel.Dock="Left" Content="Fly"/>
+                            <CheckBox DockPanel.Dock="Right" HorizontalAlignment="Right" Content="Hover"/>
+                        </DockPanel>
+                        <DockPanel Grid.Row="1" Grid.Column="4">
+                            <Label DockPanel.Dock="Right" Content="ft."/>
+                            <mah:NumericUpDown Minimum="0" Interval="5" Value="{Binding Creature.Fly}"/>
+                        </DockPanel>
+                    </Grid>
+                    <Separator Background="Red"/>
+                    
+                    <Grid Style="{StaticResource Spacing}">
+                        <Grid.Resources>
+                            <Style TargetType="{x:Type Label}" BasedOn="{StaticResource {x:Type Label}}">
+                                <Setter Property="HorizontalAlignment" Value="Left"/>
+                            </Style>
+                        </Grid.Resources>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                            <ColumnDefinition/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid.RowDefinitions>
+                            <RowDefinition/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+
+                        <Label Content="Strength"/>
+                        <DockPanel Grid.Row="1">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.StrengthMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.StrengthScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="1" Content="Dexterity"/>
+                        <DockPanel Grid.Row="1" Grid.Column="1">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.DexterityMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.DexterityScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="2" Content="Constitution"/>
+                        <DockPanel Grid.Row="1" Grid.Column="2">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.ConstitutionMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.ConstitutionScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="3" Content="Intelligence"/>
+                        <DockPanel Grid.Row="1" Grid.Column="3">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.IntelligenceMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.IntelligenceScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="4" Content="Wisdom"/>
+                        <DockPanel Grid.Row="1" Grid.Column="4">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.WisdomMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.WisdomScore}"/>
+                        </DockPanel>
+                        <Label Grid.Column="5" Content="Charisma"/>
+                        <DockPanel Grid.Row="1" Grid.Column="5">
+                            <Label DockPanel.Dock="Right" Width="40" Content="{Binding Creature.CharismaMod, Converter={StaticResource ModDisplayConverter}}"/>
+                            <mah:NumericUpDown HorizontalAlignment="Stretch"  Minimum="1" Value="{Binding Creature.CharismaScore}"/>
+                        </DockPanel>
+                    </Grid>
+                    <Separator Background="Red"/>
+                </StackPanel>
             </TabItem>
 
-            <TabItem Header="Hit Points and Armor Class">
-                <Grid >
-                    
-                </Grid>
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Statistics">
+                <StackPanel>
+
+                </StackPanel>
+            </TabItem>
+
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Abilities">
+                
+            </TabItem>
+
+            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                <TabItem.Header>
+                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="15" Background="Black" />
+                </TabItem.Header>
+            </TabItem>
+
+            <TabItem Header="Actions">
+                
             </TabItem>
         </mah:MetroAnimatedTabControl>
     </Grid>

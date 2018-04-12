@@ -73,8 +73,9 @@ namespace DnDTool2.Model
                 OnPropertyChanged("Size");
                 hd = CreatureSizeToHitDie(size);
                 OnPropertyChanged("HD");
-                hp = 
+                hp = CalcHP(hdCount, hd, mods[2]);
                 OnPropertyChanged("HP");
+                OnPropertyChanged("HPCalculation");
             }
         }
         public CreatureType Type
@@ -100,12 +101,35 @@ namespace DnDTool2.Model
         private Armor armor;
         private bool shield;
         private bool naturalArmor;
+        private int naturalArmorAC;
         private bool mageArmor;
         private bool barkskin;
 
-        public int AC
+        public string AC
         {
-            get => ac;
+            get
+            {
+                string s = "";
+                if (naturalArmor)
+                    s += ", natural armor";
+                else
+                {
+                    if (armor != null)
+                        if (!armor.Name.Equals("None"))
+                            s += ", " + armor.Name.ToLower();
+                }
+                if (shield)
+                    s += ", shield";
+                if (mageArmor)
+                    s += ", " + Math.Max(ac, (13 + mods[1] + (shield ? 2 : 0))) + " with mage armor";
+                if (barkskin)
+                    s += ", " + Math.Max(ac, 16) + " with barksin";
+
+                if (!s.Equals(""))
+                    return ac + " (" + s.Substring(2) + ")";
+                else
+                    return ac.ToString();
+            }
         }
         public Armor Armor
         {
@@ -114,6 +138,7 @@ namespace DnDTool2.Model
             {
                 armor = value;
                 OnPropertyChanged("Armor");
+                ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
                 OnPropertyChanged("AC");
             }
         }
@@ -124,6 +149,7 @@ namespace DnDTool2.Model
             {
                 shield = value;
                 OnPropertyChanged("Shield");
+                ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
                 OnPropertyChanged("AC");
             }
         }
@@ -134,6 +160,18 @@ namespace DnDTool2.Model
             {
                 naturalArmor = value;
                 OnPropertyChanged("NaturalArmor");
+                ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
+                OnPropertyChanged("AC");
+            }
+        }
+        public int NaturalArmorAC
+        {
+            get => naturalArmorAC;
+            set
+            {
+                naturalArmorAC = value;
+                OnPropertyChanged("NaturalArmorAC");
+                ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
                 OnPropertyChanged("AC");
             }
         }
@@ -166,6 +204,13 @@ namespace DnDTool2.Model
         {
             get => hp;
         }
+        public string HPCalculation
+        {
+            get
+            {
+                return hdCount + "d" + hd.Faces + (mods[2] < 0 ? " - " : " + ") + mods[2] * hdCount;
+            }
+        }
         public int HDCount
         {
             get => hdCount;
@@ -173,7 +218,9 @@ namespace DnDTool2.Model
             {
                 hdCount = value;
                 OnPropertyChanged("HDCount");
+                hp = CalcHP(hdCount, hd, mods[2]);
                 OnPropertyChanged("HP");
+                OnPropertyChanged("HPCalculation");
             }
         }
         public Die HD
@@ -184,14 +231,454 @@ namespace DnDTool2.Model
         private int speed, climb, swim, burrow, fly;
         private bool hover;
 
-        private ChallengeRatingNumber cr;
-        private int exp;
-        private int proficiencyBonus;
+        public int Speed
+        {
+            get => speed;
+            set
+            {
+                speed = value;
+                OnPropertyChanged("Speed");
+            }
+        }
+        public int Climb
+        {
+            get => climb;
+            set
+            {
+                climb = value;
+                OnPropertyChanged("Climb");
+            }
+        }
+        public int Swim
+        {
+            get => swim;
+            set
+            {
+                swim = value;
+                OnPropertyChanged("Swim");
+            }
+        }
+        public int Burrow
+        {
+            get => burrow;
+            set
+            {
+                burrow = value;
+                OnPropertyChanged("Burrow");
+            }
+        }
+        public int Fly
+        {
+            get => fly;
+            set
+            {
+                fly = value;
+                OnPropertyChanged("Fly");
+            }
+        }
+        public bool Hover
+        {
+            get => hover;
+            set
+            {
+                hover = value;
+                OnPropertyChanged("Hover");
+            }
+        }
+
+        private ChallengeRating cr;
+
+        public ChallengeRating CR
+        {
+            get => cr;
+            set
+            {
+                cr = value;
+                OnPropertyChanged("CR");
+            }
+        }
 
         private int[] scores;
         private int[] mods;
         private bool[] saves;
         private SkillProficiencyType[] skills;
+
+        public int StrengthScore
+        {
+            get => scores[0];
+            set
+            {
+                scores[0] = value;
+                OnPropertyChanged("StrengthScore");
+                mods[0] = ScoreToMod(value);
+                OnPropertyChanged("StrengthMod");
+                OnPropertyChanged("StrengthSave");
+            }
+        }
+        public int DexterityScore
+        {
+            get => scores[1];
+            set
+            {
+                scores[1] = value;
+                OnPropertyChanged("DexterityScore");
+                mods[1] = ScoreToMod(value);
+                OnPropertyChanged("DexterityMod");
+                OnPropertyChanged("DexteritySave");
+                ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
+                OnPropertyChanged("AC");
+            }
+        }
+        public int ConstitutionScore
+        {
+            get => scores[2];
+            set
+            {
+                scores[2] = value;
+                OnPropertyChanged("ConstitutionScore");
+                mods[2] = ScoreToMod(value);
+                OnPropertyChanged("ConstitutionMod");
+                OnPropertyChanged("ConstitutionSave");
+                hp = CalcHP(hdCount, hd, mods[2]);
+                OnPropertyChanged("HP");
+                OnPropertyChanged("HPCalculation");
+            }
+        }
+        public int IntelligenceScore
+        {
+            get => scores[3];
+            set
+            {
+                scores[3] = value;
+                OnPropertyChanged("IntelligenceScore");
+                mods[3] = ScoreToMod(value);
+                OnPropertyChanged("IntelligenceMod");
+                OnPropertyChanged("IntelligenceSave");
+            }
+        }
+        public int WisdomScore
+        {
+            get => scores[4];
+            set
+            {
+                scores[4] = value;
+                OnPropertyChanged("WisdomScore");
+                mods[4] = ScoreToMod(value);
+                OnPropertyChanged("WisdomMod");
+                OnPropertyChanged("WisdomSave");
+            }
+        }
+        public int CharismaScore
+        {
+            get => scores[5];
+            set
+            {
+                scores[5] = value;
+                OnPropertyChanged("CharismaScore");
+                mods[5] = ScoreToMod(value);
+                OnPropertyChanged("CharismaMod");
+                OnPropertyChanged("CharismaSave");
+            }
+        }
+        public int StrengthMod
+        {
+            get => mods[0];
+        }
+        public int DexterityMod
+        {
+            get => mods[1];
+        }
+        public int ConstitutionMod
+        {
+            get => mods[2];
+        }
+        public int IntelligenceMod
+        {
+            get => mods[3];
+        }
+        public int WisdomMod
+        {
+            get => mods[4];
+        }
+        public int CharismaMod
+        {
+            get => mods[5];
+        }
+        public bool StrengthSaveProf
+        {
+            get => saves[0];
+            set
+            {
+                saves[0] = value;
+                OnPropertyChanged("StrengthSaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public bool DexteritySaveProf
+        {
+            get => saves[1];
+            set
+            {
+                saves[1] = value;
+                OnPropertyChanged("DexteritySaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public bool ConstitutionSaveProf
+        {
+            get => saves[2];
+            set
+            {
+                saves[2] = value;
+                OnPropertyChanged("ConstitutionSaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public bool IntelligenceSaveProf
+        {
+            get => saves[3];
+            set
+            {
+                saves[3] = value;
+                OnPropertyChanged("IntelligenceSaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public bool WisdomSaveProf
+        {
+            get => saves[4];
+            set
+            {
+                saves[4] = value;
+                OnPropertyChanged("WisdomSaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public bool CharismaSaveProf
+        {
+            get => saves[5];
+            set
+            {
+                saves[5] = value;
+                OnPropertyChanged("CharismaSaveProf");
+                OnPropertyChanged("Saves");
+            }
+        }
+        public string Saves
+        {
+            get
+            {
+                string s = "";
+                string[] statNames = GetStatNames();
+                for (int i = 0; i < saves.Length; i++)
+                {
+                    if (saves[i])
+                        s += ", " + statNames[i] + " " + ModDisplay(mods[i]);
+                }
+                return s.Equals("") ? "" : s.Substring(2);
+            }
+        }
+        public SkillProficiencyType AthleticsProf
+        {
+            get => skills[0];
+            set
+            {
+                skills[0] = value;
+                OnPropertyChanged("AthleticsProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType AcrobaticsProf
+        {
+            get => skills[1];
+            set
+            {
+                skills[1] = value;
+                OnPropertyChanged("AcrobaticsProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType SleightOfHandProf
+        {
+            get => skills[2];
+            set
+            {
+                skills[2] = value;
+                OnPropertyChanged("SleightOfHandProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType StealthProf
+        {
+            get => skills[3];
+            set
+            {
+                skills[3] = value;
+                OnPropertyChanged("StealthProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType ArcanaProf
+        {
+            get => skills[4];
+            set
+            {
+                skills[4] = value;
+                OnPropertyChanged("ArcanaProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType HistoryProf
+        {
+            get => skills[5];
+            set
+            {
+                skills[5] = value;
+                OnPropertyChanged("HistoryProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType InvestigationProf
+        {
+            get => skills[6];
+            set
+            {
+                skills[6] = value;
+                OnPropertyChanged("InvestigationProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType NatureProf
+        {
+            get => skills[7];
+            set
+            {
+                skills[7] = value;
+                OnPropertyChanged("NatureProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType ReligionProf
+        {
+            get => skills[8];
+            set
+            {
+                skills[8] = value;
+                OnPropertyChanged("ReligionProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType AnimalHandlingProf
+        {
+            get => skills[9];
+            set
+            {
+                skills[9] = value;
+                OnPropertyChanged("AnimalHandlingProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType InsightProf
+        {
+            get => skills[10];
+            set
+            {
+                skills[10] = value;
+                OnPropertyChanged("InsightProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType MedicineProf
+        {
+            get => skills[11];
+            set
+            {
+                skills[11] = value;
+                OnPropertyChanged("MedicineProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType PerceptionProf
+        {
+            get => skills[12];
+            set
+            {
+                skills[12] = value;
+                OnPropertyChanged("PerceptionProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType SurvivalProf
+        {
+            get => skills[13];
+            set
+            {
+                skills[13] = value;
+                OnPropertyChanged("SurvivalProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType DeceptionProf
+        {
+            get => skills[14];
+            set
+            {
+                skills[14] = value;
+                OnPropertyChanged("DeceptionProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType IntimidationProf
+        {
+            get => skills[15];
+            set
+            {
+                skills[15] = value;
+                OnPropertyChanged("IntimidationProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType PerformanceProf
+        {
+            get => skills[16];
+            set
+            {
+                skills[16] = value;
+                OnPropertyChanged("PerformanceProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public SkillProficiencyType PersuasionProf
+        {
+            get => skills[17];
+            set
+            {
+                skills[17] = value;
+                OnPropertyChanged("PersuasionProf");
+                OnPropertyChanged("Skills");
+            }
+        }
+        public string Skills
+        {
+            get
+            {
+                string s = "";
+                string[] skillNames = GetSkillNames();
+                for (int i = 0; i < skills.Length; i++)
+                {
+                    switch (skills[i])
+                    {
+                        case SkillProficiencyType.PROFICIENCY:
+                            s += ", " + skillNames[i] + " " + ModDisplay(mods[i]);
+                            break;
+                        case SkillProficiencyType.EXPERTISE:
+                            s += ", " + skillNames[i] + " " + ModDisplay(mods[i] * 2);
+                            break;
+                    }
+                }
+                return s.Equals("") ? "" : s.Substring(2);
+            }
+        }
 
         private DamageEffect[] damageEffects;
 
@@ -204,10 +691,10 @@ namespace DnDTool2.Model
         private int otherLanguages;
 
         public Creature(string name, CreatureSize size, CreatureType type, Alignment alignment,
-            int ac, Armor armor, bool shield, bool naturalArmor, bool mageArmor, bool barkskin,
+            int ac, Armor armor, bool shield, bool naturalArmor, int naturalArmorAC, bool mageArmor, bool barkskin,
             int hp, int hdCount, Die hd,
             int speed, int swim, int climb, int burrow, int fly, bool hover,
-            ChallengeRatingNumber cr, int exp, int proficiencyBonus,
+            ChallengeRating cr,
             int[] scores, int[] mods, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
             int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside,
@@ -222,6 +709,7 @@ namespace DnDTool2.Model
             this.armor = armor;
             this.shield = shield;
             this.naturalArmor = naturalArmor;
+            this.naturalArmorAC = naturalArmorAC;
             this.mageArmor = mageArmor;
             this.barkskin = barkskin;
 
@@ -237,8 +725,6 @@ namespace DnDTool2.Model
             this.hover = hover;
 
             this.cr = cr;
-            this.exp = exp;
-            this.proficiencyBonus = proficiencyBonus;
 
             this.scores = scores;
             this.mods = mods;
@@ -259,19 +745,20 @@ namespace DnDTool2.Model
         }
 
         public Creature(string name, CreatureSize size, CreatureType type, Alignment alignment,
-            int ac, Armor armor, bool shield, bool naturalArmor, bool mageArmor, bool barkskin,
+            int ac, Armor armor, bool shield, bool naturalArmor, int naturalArmorAC, bool mageArmor, bool barkskin,
             int hp, int hdCount, Die hd,
             int speed, int swim, int climb, int burrow, int fly, bool hover,
-            ChallengeRatingNumber cr, int exp, int proficiencyBonus,
+            ChallengeRating cr,
             int[] scores, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
             int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside,
             List<string> languages, int otherLanguages) :
             this(name, size, type, alignment,
-                ac, armor, shield, naturalArmor, mageArmor, barkskin,
+                ac, armor, shield, naturalArmor, naturalArmorAC, mageArmor, barkskin,
                 hp, hdCount, hd,
                 speed, swim, climb, burrow, fly, hover,
-                cr, exp, proficiencyBonus, scores, ScoresToMods(scores), saves, skills,
+                cr,
+                scores, ScoresToMods(scores), saves, skills,
                 damageEffects, conditionImmunities,
                 darkvision, blindsight, tremorsense, truesight, blindOutside,
                 languages, otherLanguages)
@@ -285,9 +772,10 @@ namespace DnDTool2.Model
             this.alignment = Alignment.U;
 
             this.ac = 10;
-            this.armor = null;
+            this.armor = new Armor("None", ArmorType.NONE, 10);
             this.shield = false;
             this.naturalArmor = false;
+            this.naturalArmorAC = 10;
             this.mageArmor = false;
             this.barkskin = false;
 
@@ -302,9 +790,7 @@ namespace DnDTool2.Model
             this.fly = 0;
             this.hover = false;
 
-            this.cr = ChallengeRatingNumber.ZERO;
-            this.exp = 0;
-            this.proficiencyBonus = 2;
+            this.cr = new ChallengeRating(ChallengeRatingNumber.ZERO, 0, 2);
 
             this.scores = new int[] { strScore, dexScore, conScore, intScore, wisScore, chaScore };
             this.mods = ScoresToMods(this.scores);
@@ -401,9 +887,42 @@ namespace DnDTool2.Model
             }
         }
 
-        private static int CalcHP(int hdCount, Die hd, int conMod)
+        public static int CalcHP(int hdCount, Die hd, int conMod)
         {
+            return (int)Math.Floor(hdCount * (hd.Average + conMod));
+        }
 
+        public static int CalcAC(Armor armor, int dexMod, bool shield, bool naturalArmor, int naturalArmorAC)
+        {
+            int ac;
+            if (naturalArmor)
+                ac = naturalArmorAC + dexMod;
+            else
+            {
+                if (armor == null)
+                    ac = 10;
+                else
+                {
+                    switch (armor.Type)
+                    {
+                        case ArmorType.NONE:
+                            ac = 10 + dexMod;
+                            break;
+                        case ArmorType.LIGHT:
+                            ac = armor.BaseAC + dexMod;
+                            break;
+                        case ArmorType.MEDIUM:
+                            ac = armor.BaseAC + Math.Min(dexMod, 2);
+                            break;
+                        case ArmorType.HEAVY:
+                            ac = armor.BaseAC;
+                            break;
+                        default:
+                            throw new NotSupportedException();
+                    }
+                }
+            }
+            return ac + (shield ? 2 : 0);
         }
 
         private static int ScoreToMod(int score)
@@ -419,6 +938,39 @@ namespace DnDTool2.Model
                 ret[i] = ScoreToMod(scores[i]);
             }
             return ret;
+        }
+
+        private static string ModDisplay(int mod)
+        {
+            return (mod < 0 ? "+" : "") + mod;
+        }
+
+        public static string[] GetStatNames()
+        {
+            return new string[] { "Strength", "Dexterity", "Constitution", "Intelligence", "Wisdom", "Charisma" };
+        }
+
+        public static string[] GetSkillNames()
+        {
+            return new string[]
+            {
+                "Athletics",
+                "Acrobatics",
+                "Sleight of Hand",
+                "Stealth", "Arcana",
+                "History",
+                "Investigation",
+                "Nature",
+                "Religion",
+                "Animal Handling",
+                "Insight", "Medicine",
+                "Perception",
+                "Survival",
+                "Deception",
+                "Intimidation",
+                "Performance",
+                "Persuasion"
+            };
         }
     }
 }

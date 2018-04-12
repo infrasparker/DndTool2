@@ -32,12 +32,10 @@ namespace DnDTool2.ViewModel
             Alignments = Enum.GetValues(typeof(Alignment)).Cast<Alignment>().ToList();
             Armors = Armor.GetStandardArmors();
             CRs = ChallengeRating.GetStandardCRs();
-            Skills = new List<string> { "Athletics", "Acrobatics", "Sleight of Hand", "Stealth", "Arcana", "History",
-                "Investigation", "Nature", "Religion", "Animal Handling", "Insight", "Medicine", "Perception", "Survival",
-                "Deception", "Intimidation", "Performance", "Persuasion"};
+            Skills = Creature.GetSkillNames().ToList();
             DisplayedSkill = "Athletics";
 
-            this.Creature = new Creature("Creature Name");
+            this.Creature = new Creature("Creature Name", 10, 10, 10, 10, 10, 10);
         }
     }
 }
