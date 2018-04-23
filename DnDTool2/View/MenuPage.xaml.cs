@@ -37,7 +37,7 @@ namespace DnDTool2.View
 
         private void SpellTomeButton_Click(object sender, RoutedEventArgs e)
         {
-
+            NavigationService.Navigate(new SpellTome());
         }
 
         private void ItemCompendium_Click(object sender, RoutedEventArgs e)

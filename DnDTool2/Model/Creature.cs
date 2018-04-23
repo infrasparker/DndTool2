@@ -25,6 +25,11 @@ namespace DnDTool2.Model
         TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN, TWENTY, TWENTY_ONE, TWENTY_TWO,
         TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE, THIRTY
     }
+    public enum SkillType
+    {
+        ATHLETICS, ACROBATICS, SLEIGHT_OF_HAND, STEALTH, ARCANA, HISTORY, INVESTIGATION, NATURE, RELIGION, ANIMAL_HANDLING, INSIGHT,
+        MEDICINE, PERCEPTION, SURVIVAL, DECEPTION, INTIMIDATION, PERFORMANCE, PERSUASION
+    }
     public enum SkillProficiencyType
     {
         NONE, PROFICIENCY, EXPERTISE
@@ -32,7 +37,7 @@ namespace DnDTool2.Model
     public enum DamageType
     {
         ACID, BLUDGEONING, COLD, FIRE, FORCE, LIGHTNING, NECROTIC, PIERCING, POISON, PSYCHIC, RADIANT, SLASHING, THUNDER,
-        NONMAGICAL, NONMAGICAL_ADAMANTINE
+        NONMAGICAL, NONMAGICAL_ADAMANTINE, NONMAGICAL_SILVER
     }
     public enum DamageEffect
     {
@@ -295,6 +300,9 @@ namespace DnDTool2.Model
             {
                 cr = value;
                 OnPropertyChanged("CR");
+                OnPropertyChanged("Saves");
+                PropertyUpdateList(GetSkillNames().ToList());
+                OnPropertyChanged("PassivePerception");
             }
         }
 
@@ -313,6 +321,9 @@ namespace DnDTool2.Model
                 mods[0] = ScoreToMod(value);
                 OnPropertyChanged("StrengthMod");
                 OnPropertyChanged("StrengthSave");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("Athletics");
+                OnPropertyChanged("Skills");
             }
         }
         public int DexterityScore
@@ -327,6 +338,11 @@ namespace DnDTool2.Model
                 OnPropertyChanged("DexteritySave");
                 ac = CalcAC(armor, mods[1], shield, naturalArmor, naturalArmorAC);
                 OnPropertyChanged("AC");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("Acrobatics");
+                OnPropertyChanged("SleightOfHand");
+                OnPropertyChanged("Stealth");
+                OnPropertyChanged("Skills");
             }
         }
         public int ConstitutionScore
@@ -342,6 +358,8 @@ namespace DnDTool2.Model
                 hp = CalcHP(hdCount, hd, mods[2]);
                 OnPropertyChanged("HP");
                 OnPropertyChanged("HPCalculation");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("Skills");
             }
         }
         public int IntelligenceScore
@@ -354,6 +372,13 @@ namespace DnDTool2.Model
                 mods[3] = ScoreToMod(value);
                 OnPropertyChanged("IntelligenceMod");
                 OnPropertyChanged("IntelligenceSave");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("Arcana");
+                OnPropertyChanged("History");
+                OnPropertyChanged("Investigation");
+                OnPropertyChanged("Nature");
+                OnPropertyChanged("Religion");
+                OnPropertyChanged("Skills");
             }
         }
         public int WisdomScore
@@ -366,6 +391,14 @@ namespace DnDTool2.Model
                 mods[4] = ScoreToMod(value);
                 OnPropertyChanged("WisdomMod");
                 OnPropertyChanged("WisdomSave");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("AnimalHandling");
+                OnPropertyChanged("Insight");
+                OnPropertyChanged("Medicine");
+                OnPropertyChanged("Perception");
+                OnPropertyChanged("Survival");
+                OnPropertyChanged("Skills");
+                OnPropertyChanged("PassivePerception");
             }
         }
         public int CharismaScore
@@ -378,6 +411,12 @@ namespace DnDTool2.Model
                 mods[5] = ScoreToMod(value);
                 OnPropertyChanged("CharismaMod");
                 OnPropertyChanged("CharismaSave");
+                OnPropertyChanged("Saves");
+                OnPropertyChanged("Deception");
+                OnPropertyChanged("Intimidation");
+                OnPropertyChanged("Performance");
+                OnPropertyChanged("Persuasion");
+                OnPropertyChanged("Skills");
             }
         }
         public int StrengthMod
@@ -473,7 +512,7 @@ namespace DnDTool2.Model
                 for (int i = 0; i < saves.Length; i++)
                 {
                     if (saves[i])
-                        s += ", " + statNames[i] + " " + ModDisplay(mods[i]);
+                        s += ", " + statNames[i] + " " + ModDisplay(mods[i] + cr.ProficiencyBonus);
                 }
                 return s.Equals("") ? "" : s.Substring(2);
             }
@@ -485,8 +524,13 @@ namespace DnDTool2.Model
             {
                 skills[0] = value;
                 OnPropertyChanged("AthleticsProf");
+                OnPropertyChanged("Athletics");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Athletics
+        {
+            get => mods[0] + ProfTypeToInt(skills[0], cr.ProficiencyBonus);
         }
         public SkillProficiencyType AcrobaticsProf
         {
@@ -495,8 +539,13 @@ namespace DnDTool2.Model
             {
                 skills[1] = value;
                 OnPropertyChanged("AcrobaticsProf");
+                OnPropertyChanged("Acrobatics");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Acrobatics
+        {
+            get => mods[1] + ProfTypeToInt(skills[1], cr.ProficiencyBonus);
         }
         public SkillProficiencyType SleightOfHandProf
         {
@@ -505,8 +554,13 @@ namespace DnDTool2.Model
             {
                 skills[2] = value;
                 OnPropertyChanged("SleightOfHandProf");
+                OnPropertyChanged("SleightOfHand");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int SleightOfHand
+        {
+            get => mods[1] + ProfTypeToInt(skills[2], cr.ProficiencyBonus);
         }
         public SkillProficiencyType StealthProf
         {
@@ -515,8 +569,13 @@ namespace DnDTool2.Model
             {
                 skills[3] = value;
                 OnPropertyChanged("StealthProf");
+                OnPropertyChanged("Stealth");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Stealth
+        {
+            get => mods[1] + ProfTypeToInt(skills[3], cr.ProficiencyBonus);
         }
         public SkillProficiencyType ArcanaProf
         {
@@ -525,8 +584,13 @@ namespace DnDTool2.Model
             {
                 skills[4] = value;
                 OnPropertyChanged("ArcanaProf");
+                OnPropertyChanged("Arcana");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Arcana
+        {
+            get => mods[3] + ProfTypeToInt(skills[4], cr.ProficiencyBonus);
         }
         public SkillProficiencyType HistoryProf
         {
@@ -535,8 +599,13 @@ namespace DnDTool2.Model
             {
                 skills[5] = value;
                 OnPropertyChanged("HistoryProf");
+                OnPropertyChanged("History");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int History
+        {
+            get => mods[3] + ProfTypeToInt(skills[5], cr.ProficiencyBonus);
         }
         public SkillProficiencyType InvestigationProf
         {
@@ -545,8 +614,13 @@ namespace DnDTool2.Model
             {
                 skills[6] = value;
                 OnPropertyChanged("InvestigationProf");
+                OnPropertyChanged("Investigation");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Investigation
+        {
+            get => mods[3] + ProfTypeToInt(skills[6], cr.ProficiencyBonus);
         }
         public SkillProficiencyType NatureProf
         {
@@ -555,8 +629,13 @@ namespace DnDTool2.Model
             {
                 skills[7] = value;
                 OnPropertyChanged("NatureProf");
+                OnPropertyChanged("Nature");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Nature
+        {
+            get => mods[3] + ProfTypeToInt(skills[7], cr.ProficiencyBonus);
         }
         public SkillProficiencyType ReligionProf
         {
@@ -565,8 +644,13 @@ namespace DnDTool2.Model
             {
                 skills[8] = value;
                 OnPropertyChanged("ReligionProf");
+                OnPropertyChanged("Religion");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Religion
+        {
+            get => mods[3] + ProfTypeToInt(skills[8], cr.ProficiencyBonus);
         }
         public SkillProficiencyType AnimalHandlingProf
         {
@@ -575,8 +659,13 @@ namespace DnDTool2.Model
             {
                 skills[9] = value;
                 OnPropertyChanged("AnimalHandlingProf");
+                OnPropertyChanged("AnimalHandling");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int AnimalHandling
+        {
+            get => mods[4] + ProfTypeToInt(skills[9], cr.ProficiencyBonus);
         }
         public SkillProficiencyType InsightProf
         {
@@ -585,8 +674,13 @@ namespace DnDTool2.Model
             {
                 skills[10] = value;
                 OnPropertyChanged("InsightProf");
+                OnPropertyChanged("Insight");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Insight
+        {
+            get => mods[4] + ProfTypeToInt(skills[10], cr.ProficiencyBonus);
         }
         public SkillProficiencyType MedicineProf
         {
@@ -595,8 +689,13 @@ namespace DnDTool2.Model
             {
                 skills[11] = value;
                 OnPropertyChanged("MedicineProf");
+                OnPropertyChanged("Medicine");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Medicine
+        {
+            get => mods[4] + ProfTypeToInt(skills[11], cr.ProficiencyBonus);
         }
         public SkillProficiencyType PerceptionProf
         {
@@ -605,8 +704,14 @@ namespace DnDTool2.Model
             {
                 skills[12] = value;
                 OnPropertyChanged("PerceptionProf");
+                OnPropertyChanged("Perception");
                 OnPropertyChanged("Skills");
+                OnPropertyChanged("PassivePerception");
             }
+        }
+        public int Perception
+        {
+            get => mods[4] + ProfTypeToInt(skills[12], cr.ProficiencyBonus);
         }
         public SkillProficiencyType SurvivalProf
         {
@@ -615,8 +720,13 @@ namespace DnDTool2.Model
             {
                 skills[13] = value;
                 OnPropertyChanged("SurvivalProf");
+                OnPropertyChanged("Survival");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Survival
+        {
+            get => mods[4] + ProfTypeToInt(skills[13], cr.ProficiencyBonus);
         }
         public SkillProficiencyType DeceptionProf
         {
@@ -625,8 +735,13 @@ namespace DnDTool2.Model
             {
                 skills[14] = value;
                 OnPropertyChanged("DeceptionProf");
+                OnPropertyChanged("Deception");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Deception
+        {
+            get => mods[5] + ProfTypeToInt(skills[14], cr.ProficiencyBonus);
         }
         public SkillProficiencyType IntimidationProf
         {
@@ -635,8 +750,13 @@ namespace DnDTool2.Model
             {
                 skills[15] = value;
                 OnPropertyChanged("IntimidationProf");
+                OnPropertyChanged("Intimidation");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Intimidation
+        {
+            get => mods[5] + ProfTypeToInt(skills[15], cr.ProficiencyBonus);
         }
         public SkillProficiencyType PerformanceProf
         {
@@ -645,8 +765,13 @@ namespace DnDTool2.Model
             {
                 skills[16] = value;
                 OnPropertyChanged("PerformanceProf");
+                OnPropertyChanged("Performance");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Performance
+        {
+            get => mods[5] + ProfTypeToInt(skills[16], cr.ProficiencyBonus);
         }
         public SkillProficiencyType PersuasionProf
         {
@@ -655,8 +780,13 @@ namespace DnDTool2.Model
             {
                 skills[17] = value;
                 OnPropertyChanged("PersuasionProf");
+                OnPropertyChanged("Persuasion");
                 OnPropertyChanged("Skills");
             }
+        }
+        public int Persuasion
+        {
+            get => mods[5] + ProfTypeToInt(skills[17], cr.ProficiencyBonus);
         }
         public string Skills
         {
@@ -666,15 +796,8 @@ namespace DnDTool2.Model
                 string[] skillNames = GetSkillNames();
                 for (int i = 0; i < skills.Length; i++)
                 {
-                    switch (skills[i])
-                    {
-                        case SkillProficiencyType.PROFICIENCY:
-                            s += ", " + skillNames[i] + " " + ModDisplay(mods[i]);
-                            break;
-                        case SkillProficiencyType.EXPERTISE:
-                            s += ", " + skillNames[i] + " " + ModDisplay(mods[i] * 2);
-                            break;
-                    }
+                    if (skills[i] != SkillProficiencyType.NONE)
+                        s += ", " + skillNames[i] + " " + ModDisplay(GetSkill(skillNames[i]));
                 }
                 return s.Equals("") ? "" : s.Substring(2);
             }
@@ -682,12 +805,483 @@ namespace DnDTool2.Model
 
         private DamageEffect[] damageEffects;
 
+        public DamageEffect Acid
+        {
+            get => damageEffects[0];
+            set
+            {
+                damageEffects[0] = value;
+                OnPropertyChanged("Acid");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Bludgeoning
+        {
+            get => damageEffects[1];
+            set
+            {
+                damageEffects[1] = value;
+                OnPropertyChanged("Bludgeoning");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Cold
+        {
+            get => damageEffects[2];
+            set
+            {
+                damageEffects[2] = value;
+                OnPropertyChanged("Cold");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Fire
+        {
+            get => damageEffects[3];
+            set
+            {
+                damageEffects[3] = value;
+                OnPropertyChanged("Fire");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Force
+        {
+            get => damageEffects[4];
+            set
+            {
+                damageEffects[4] = value;
+                OnPropertyChanged("Force");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Lightning
+        {
+            get => damageEffects[5];
+            set
+            {
+                damageEffects[5] = value;
+                OnPropertyChanged("Lightning");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Necrotic
+        {
+            get => damageEffects[6];
+            set
+            {
+                damageEffects[6] = value;
+                OnPropertyChanged("Necrotic");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Piercing
+        {
+            get => damageEffects[7];
+            set
+            {
+                damageEffects[7] = value;
+                OnPropertyChanged("Piercing");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Poison
+        {
+            get => damageEffects[8];
+            set
+            {
+                damageEffects[8] = value;
+                OnPropertyChanged("Poison");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Psychic
+        {
+            get => damageEffects[9];
+            set
+            {
+                damageEffects[9] = value;
+                OnPropertyChanged("Psychic");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Radiant
+        {
+            get => damageEffects[10];
+            set
+            {
+                damageEffects[10] = value;
+                OnPropertyChanged("Radiant");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Slashing
+        {
+            get => damageEffects[11];
+            set
+            {
+                damageEffects[11] = value;
+                OnPropertyChanged("Slashing");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Thunder
+        {
+            get => damageEffects[12];
+            set
+            {
+                damageEffects[12] = value;
+                OnPropertyChanged("Thunder");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Nonmagical
+        {
+            get => damageEffects[13];
+            set
+            {
+                damageEffects[13] = value;
+                OnPropertyChanged("Nonmagical");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Nonmagical_Adamantine
+        {
+            get => damageEffects[14];
+            set
+            {
+                damageEffects[14] = value;
+                OnPropertyChanged("Nonmagical_Adamantine");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public DamageEffect Nonmagical_Silver
+        {
+            get => damageEffects[15];
+            set
+            {
+                damageEffects[15] = value;
+                OnPropertyChanged("Nonmagical_Silver");
+                OnPropertyChanged("Vulnerabilities");
+                OnPropertyChanged("Resistances");
+                OnPropertyChanged("Immunities");
+            }
+        }
+        public string Vulnerabilities
+        {
+            get
+            {
+                string s = "";
+                string[] damageNames = GetDamageNames();
+                for (int i = 0; i < damageNames.Length; i++)
+                {
+                    if (damageEffects[i] == DamageEffect.VULNERABILITY)
+                        s += (i <= 12 ? ", " : "; ") + damageNames[i];
+                }
+                return (s == "" ? "" : s.Substring(2));
+            }
+        }
+        public string Resistances
+        {
+            get
+            {
+                string s = "";
+                string[] damageNames = GetDamageNames();
+                for (int i = 0; i < damageNames.Length; i++)
+                {
+                    if (damageEffects[i] == DamageEffect.RESISTANCE)
+                        s += (i <= 12 ? ", " : "; ") + damageNames[i];
+                }
+                return (s == "" ? "" : s.Substring(2));
+            }
+        }
+        public string Immunities
+        {
+            get
+            {
+                string s = "";
+                string[] damageNames = GetDamageNames();
+                for (int i = 0; i < damageNames.Length; i++)
+                {
+                    if (damageEffects[i] == DamageEffect.IMMUNITY)
+                        s += (i <= 12 ? ", " : "; ") + damageNames[i];
+                }
+                return (s == "" ? "" : s.Substring(2));
+            }
+        }
+
         private bool[] conditionImmunities;
+        public bool Blinded
+        {
+            get => conditionImmunities[0];
+            set
+            {
+                conditionImmunities[0] = value;
+                OnPropertyChanged("Blinded");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Charmed
+        {
+            get => conditionImmunities[1];
+            set
+            {
+                conditionImmunities[1] = value;
+                OnPropertyChanged("Charmed");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Deafened
+        {
+            get => conditionImmunities[2];
+            set
+            {
+                conditionImmunities[2] = value;
+                OnPropertyChanged("Deafened");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Exhaustion
+        {
+            get => conditionImmunities[2];
+            set
+            {
+                conditionImmunities[2] = value;
+                OnPropertyChanged("Frightened");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Grappled
+        {
+            get => conditionImmunities[3];
+            set
+            {
+                conditionImmunities[3] = value;
+                OnPropertyChanged("Grappled");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Incapacitated
+        {
+            get => conditionImmunities[4];
+            set
+            {
+                conditionImmunities[4] = value;
+                OnPropertyChanged("Incapacitated");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Invisible
+        {
+            get => conditionImmunities[5];
+            set
+            {
+                conditionImmunities[5] = value;
+                OnPropertyChanged("Invisible");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Paralyzed
+        {
+            get => conditionImmunities[6];
+            set
+            {
+                conditionImmunities[6] = value;
+                OnPropertyChanged("Paralyzed");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Petrified
+        {
+            get => conditionImmunities[7];
+            set
+            {
+                conditionImmunities[7] = value;
+                OnPropertyChanged("Petrified");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Poisoned
+        {
+            get => conditionImmunities[8];
+            set
+            {
+                conditionImmunities[8] = value;
+                OnPropertyChanged("Poisoned");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Prone
+        {
+            get => conditionImmunities[9];
+            set
+            {
+                conditionImmunities[9] = value;
+                OnPropertyChanged("Prone");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Restrained
+        {
+            get => conditionImmunities[10];
+            set
+            {
+                conditionImmunities[10] = value;
+                OnPropertyChanged("Restrained");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Stunned
+        {
+            get => conditionImmunities[11];
+            set
+            {
+                conditionImmunities[11] = value;
+                OnPropertyChanged("Stunned");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public bool Unconscious
+        {
+            get => conditionImmunities[12];
+            set
+            {
+                conditionImmunities[12] = value;
+                OnPropertyChanged("Unconscious");
+                OnPropertyChanged("ConditionImmunities");
+            }
+        }
+        public string ConditionImmunities
+        {
+            get
+            {
+                string s = "";
+                string[] conditionNames = GetConditionNames();
+                for (int i = 0; i < conditionNames.Length; i++)
+                {
+                    if (conditionImmunities[i])
+                        s += ", " + conditionNames[i];
+                }
+                return (s == "" ? s : s.Substring(2));
+            }
+        }
 
         private int darkvision, blindsight, tremorsense, truesight;
-        private bool blindOutside;
+        private bool blindOutside, perceptionAdvantage;
 
-        private List<string> languages;
+        public int Darkvision
+        {
+            get => darkvision;
+            set
+            {
+                darkvision = value;
+                OnPropertyChanged("Darkvision");
+            }
+        }
+        public int Blindsight
+        {
+            get => blindsight;
+            set
+            {
+                blindsight = value;
+                OnPropertyChanged("Blindsight");
+            }
+        }
+        public int Tremorsense
+        {
+            get => tremorsense; 
+            set
+            {
+                tremorsense = value;
+                OnPropertyChanged("Tremorsense");
+            }
+        }
+        public int Truesight
+        {
+            get => truesight;
+            set
+            {
+                truesight = value;
+                OnPropertyChanged("Truesight");
+            }
+        }
+        public bool BlindOutside
+        {
+            get => blindOutside;
+            set
+            {
+                blindOutside = value;
+                OnPropertyChanged("BlindOutside");
+            }
+        }
+        public bool PerceptionAdvantage
+        {
+            get => perceptionAdvantage;
+            set
+            {
+                perceptionAdvantage = value;
+                OnPropertyChanged("PerceptionAdvantage");
+                OnPropertyChanged("PassivePerception");
+            }
+        }
+        public int PassivePerception
+        {
+            get => 10 + GetSkill("Perception") + (perceptionAdvantage ? 5 : 0);
+        }
+
+
+        private ObservableCollection<string> languages;
+        public ObservableCollection<string> Languages
+        {
+            get => languages;
+            set
+            {
+                languages = value;
+                OnPropertyChanged("Languages");
+            }
+        }
+        public string LanguageString
+        {
+            get
+            {
+                string ret = "";
+                foreach (string s in languages) {
+                    ret += ", " + s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+                }
+                return (ret == "" ? ret : ret.Substring(2));
+            }
+        }
+
         private int otherLanguages;
 
         public Creature(string name, CreatureSize size, CreatureType type, Alignment alignment,
@@ -697,8 +1291,8 @@ namespace DnDTool2.Model
             ChallengeRating cr,
             int[] scores, int[] mods, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
-            int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside,
-            List<string> languages, int otherLanguages)
+            int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside, bool perceptionAdvantage,
+            ObservableCollection<string> languages, int otherLanguages)
         {
             this.name = name;
             this.size = size;
@@ -739,6 +1333,7 @@ namespace DnDTool2.Model
             this.tremorsense = tremorsense;
             this.truesight = truesight;
             this.blindOutside = blindOutside;
+            this.perceptionAdvantage = perceptionAdvantage;
 
             this.languages = languages;
             this.otherLanguages = otherLanguages;
@@ -751,8 +1346,8 @@ namespace DnDTool2.Model
             ChallengeRating cr,
             int[] scores, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
-            int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside,
-            List<string> languages, int otherLanguages) :
+            int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside, bool perceptionAdvantage,
+            ObservableCollection<string> languages, int otherLanguages) :
             this(name, size, type, alignment,
                 ac, armor, shield, naturalArmor, naturalArmorAC, mageArmor, barkskin,
                 hp, hdCount, hd,
@@ -760,7 +1355,7 @@ namespace DnDTool2.Model
                 cr,
                 scores, ScoresToMods(scores), saves, skills,
                 damageEffects, conditionImmunities,
-                darkvision, blindsight, tremorsense, truesight, blindOutside,
+                darkvision, blindsight, tremorsense, truesight, blindOutside, perceptionAdvantage,
                 languages, otherLanguages)
         { }
 
@@ -834,6 +1429,7 @@ namespace DnDTool2.Model
                 DamageEffect.NONE, // Thunder
                 DamageEffect.NONE, // Bludgeoning, piercing, and slashing from nonmagical attacks
                 DamageEffect.NONE, // Bludgeoning, piercing, and slashing from nonmagical attacks not made with adamantine weapons
+                DamageEffect.NONE, // Bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons
             };
             this.conditionImmunities = new bool[]
             {
@@ -859,12 +1455,36 @@ namespace DnDTool2.Model
             this.tremorsense = 0;
             this.truesight = 0;
             this.blindOutside = false;
+            this.perceptionAdvantage = false;
 
-            this.languages = new List<string>();
+            this.languages = new ObservableCollection<string>();
             this.otherLanguages = 0;
+
+            OnPropertyChanged("Armor");
         }
 
         public Creature() : this("", 10, 10, 10, 10, 10, 10) { }
+
+        public void AddLanguage(string lang)
+        {
+            languages.Add(lang);
+            OnPropertyChanged("LanguageString");
+            OnPropertyChanged("Languages");
+        }
+
+        public void RemoveLanguage(string lang)
+        {
+            languages.Remove(lang);
+            OnPropertyChanged("LanguageString");
+            OnPropertyChanged("Languages");
+        }
+
+        public void SortLanguages()
+        {
+            languages = new ObservableCollection<string>(languages.OrderBy(lang => lang));
+            OnPropertyChanged("Languages");
+            OnPropertyChanged("LanguageString");
+        }
 
         private static Die CreatureSizeToHitDie(CreatureSize size)
         {
@@ -940,9 +1560,69 @@ namespace DnDTool2.Model
             return ret;
         }
 
+        private static int ProfTypeToInt(SkillProficiencyType type, int proficiencyBonus)
+        {
+            switch (type)
+            {
+                case SkillProficiencyType.EXPERTISE:
+                    return proficiencyBonus * 2;
+                case SkillProficiencyType.PROFICIENCY:
+                    return proficiencyBonus;
+                case SkillProficiencyType.NONE:
+                    return 0;
+                default:
+                    throw new NotSupportedException();
+            }
+        }
+
         private static string ModDisplay(int mod)
         {
-            return (mod < 0 ? "+" : "") + mod;
+            return (mod < 0 ? "" : "+") + mod;
+        }
+
+        private int GetSkill(string skill)
+        {
+            switch (skill)
+            {
+                case "Athletics":
+                    return Athletics;
+                case "Acrobatics":
+                    return Acrobatics;
+                case "Sleight of Hand":
+                    return SleightOfHand;
+                case "Stealth":
+                    return Stealth;
+                case "Arcana":
+                    return Arcana;
+                case "History":
+                    return History;
+                case "Investigation":
+                    return Investigation;
+                case "Nature":
+                    return Nature;
+                case "Religion":
+                    return Religion;
+                case "Animal Handling":
+                    return AnimalHandling;
+                case "Insight":
+                    return Insight;
+                case "Medicine":
+                    return Medicine;
+                case "Perception":
+                    return Perception;
+                case "Survival":
+                    return Survival;
+                case "Deception":
+                    return Deception;
+                case "Intimidation":
+                    return Intimidation;
+                case "Performance":
+                    return Performance;
+                case "Persuasion":
+                    return Persuasion;
+                default:
+                    throw new NotSupportedException();
+            }
         }
 
         public static string[] GetStatNames()
@@ -957,7 +1637,8 @@ namespace DnDTool2.Model
                 "Athletics",
                 "Acrobatics",
                 "Sleight of Hand",
-                "Stealth", "Arcana",
+                "Stealth",
+                "Arcana",
                 "History",
                 "Investigation",
                 "Nature",
@@ -970,6 +1651,51 @@ namespace DnDTool2.Model
                 "Intimidation",
                 "Performance",
                 "Persuasion"
+            };
+        }
+
+        public static string[] GetDamageNames()
+        {
+            return new string[]
+            {
+                "Acid",
+                "Bludgeoning",
+                "Cold",
+                "Fire",
+                "Force",
+                "Lightning",
+                "Necrotic",
+                "Piercing",
+                "Poison",
+                "Psychic",
+                "Radiant",
+                "Slashing",
+                "Thunder",
+                "Bludgeoning, piercing, and slashing from nonmagical attacks",
+                "Bludgeoning, piercing, and slashing from nonmagical attacks not made with adamantine weapons",
+                "Bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons"
+            };
+        }
+
+        public static string[] GetConditionNames()
+        {
+            return new string[]
+            {
+                "Blinded",
+                "Charmed",
+                "Deafened",
+                "Exhaustion",
+                "Frightened",
+                "Grappled",
+                "Incapacitated",
+                "Invisible",
+                "Paralyzed",
+                "Petrified",
+                "Poisoned",
+                "Prone",
+                "Restrained",
+                "Stunned",
+                "Unconscious"
             };
         }
     }

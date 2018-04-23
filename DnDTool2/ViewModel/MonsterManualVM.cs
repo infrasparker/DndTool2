@@ -26,7 +26,7 @@ namespace DnDTool2.ViewModel
             OpenAddCreatureCommand = new RelayCommand(OpenAddCreature);
         }
 
-        public void OpenAddCreature(object parameter)
+        private void OpenAddCreature(object parameter)
         {
             (new AddCreatureWindow(creatures)).Show();
         }

@@ -67,11 +67,13 @@
     <Compile Include="Model\ChallengeRating.cs" />
     <Compile Include="Model\Converters.cs" />
     <Compile Include="Model\Creature.cs" />
+    <Compile Include="Model\CreatureAbilities.cs" />
     <Compile Include="Model\Die.cs" />
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\ObservableClass.cs" />
     <Compile Include="Model\RelayCommand.cs" />
     <Compile Include="ViewModel\AddCreaturePageVM.cs" />
+    <Compile Include="ViewModel\AddLanguagePageVM.cs" />
     <Compile Include="ViewModel\MonsterManualVM.cs" />
     <Compile Include="ViewModel\RegisterPageVM.cs" />
     <Compile Include="ViewModel\LoginPageVM.cs" />
@@ -81,6 +83,9 @@
     </Compile>
     <Compile Include="View\AddCreatureWindow.xaml.cs">
       <DependentUpon>AddCreatureWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AddLanguagePage.xaml.cs">
+      <DependentUpon>AddLanguagePage.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -97,11 +102,18 @@
     <Compile Include="View\RegisterPage.xaml.cs">
       <DependentUpon>RegisterPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="View\SpellTome.xaml.cs">
+      <DependentUpon>SpellTome.xaml</DependentUpon>
+    </Compile>
     <Page Include="View\AddCreaturePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="View\AddCreatureWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AddLanguagePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -137,6 +149,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\SpellTome.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -165,9 +181,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Resource Include="Assets\DnDLogo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\DeleteButton.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

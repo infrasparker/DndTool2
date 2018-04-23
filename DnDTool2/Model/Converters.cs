@@ -52,7 +52,11 @@ namespace DnDTool2.Model
             switch (s)
             {
                 case "NONMAGICAL":
-                    return "Nonmagical piercing, slashing, or bludgeoning";
+                    return "Bludgeoning, piercing, and slashing from nonmagical attacks";
+                case "NONMAGICAL_ADAMANTINE":
+                    return "Bludgeoning, piercing, and slashing from nonmagical attacks not made with adamantine weapons";
+                case "NONMAGICAL_SILVER":
+                    return "Bludgeoning, piercing, and slashing from nonmagical attacks not made with silvered weapons";
                 default:
                     return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
             }
@@ -121,6 +125,32 @@ namespace DnDTool2.Model
         }
     }
 
+    public class ChallengeRatingNumberEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            int crIndex = (int)value;
+            switch (crIndex)
+            {
+                case 0:
+                    return 0;
+                case 1:
+                    return "1/8";
+                case 2:
+                    return "1/4";
+                case 3:
+                    return "1/2";
+                default:
+                    return crIndex - 3;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class ModDisplayConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -159,32 +189,6 @@ namespace DnDTool2.Model
                     return value;
             }
             return "";
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            throw new NotSupportedException();
-        }
-    }
-
-    public class ChallengeRatingNumberConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
-        {
-            int crIndex = (int)value;
-            switch (crIndex)
-            {
-                case 0:
-                    return 0;
-                case 1:
-                    return "1/8";
-                case 2:
-                    return "1/4";
-                case 3:
-                    return "1/2";
-                default:
-                    return crIndex - 3;
-            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

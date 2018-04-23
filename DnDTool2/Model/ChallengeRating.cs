@@ -6,10 +6,38 @@ using System.Threading.Tasks;
 
 namespace DnDTool2.Model
 {
-    public class ChallengeRating
+    public class ChallengeRating : ObservableClass
     {
-        public ChallengeRatingNumber cr;
-        public int exp, proficiencyBonus;
+        private ChallengeRatingNumber cr;
+        private int exp, proficiencyBonus;
+
+        public ChallengeRatingNumber CR
+        {
+            get => cr;
+            set
+            {
+                cr = value;
+                OnPropertyChanged("CR");
+            }
+        }
+        public int Exp
+        {
+            get => exp;
+            set
+            {
+                exp = value;
+                OnPropertyChanged("Exp");
+            }
+        }
+        public int ProficiencyBonus
+        {
+            get => proficiencyBonus;
+            set
+            {
+                proficiencyBonus = value;
+                OnPropertyChanged("ProficiencyBonus");
+            }
+        }
 
         public ChallengeRating(ChallengeRatingNumber cr, int exp, int proficiencyBonus)
         {
@@ -35,7 +63,26 @@ namespace DnDTool2.Model
             return ret;
         }
 
-        public override string ToString() {
+        public override bool Equals(object obj)
+        {
+            return GetHashCode() == obj.GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + cr.GetHashCode();
+            hash = hash * 23 + exp.GetHashCode();
+            hash = hash * 23 + proficiencyBonus.GetHashCode();
+            return hash;
+        }
+
+        public override string ToString()
+        {
+            return ChallengeRatingToString(cr) + " (" + exp + ")";
+        }
+
+        public string ChallengeRatingToString(ChallengeRatingNumber cr) {
             switch (cr)
             {
                 case ChallengeRatingNumber.ZERO:

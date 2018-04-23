@@ -6,21 +6,44 @@ using System.Threading.Tasks;
 
 namespace DnDTool2.Model
 {
-    public abstract class Item
+    public abstract class Item : ObservableClass
     {
-        private string name;
-        private int cost; // In copper pieces
-        private double weight;
+        protected string name;
+        protected int cost; // In copper pieces
+        protected double weight;
 
-        public string Name { get; set; }
-        public int Cost { get; set; }
-        public double Weight { get; set; }
+        public string Name
+        {
+            get => name;
+            set
+            {
+                name = value;
+                OnPropertyChanged("Name");
+            }
+        }
+        public int Cost
+        {
+            get => cost;
+            set
+            {
+                cost = value;
+                OnPropertyChanged("Cost");
+            }
+        }
+        public double Weight {
+            get => weight;
+            set
+            {
+                weight = value;
+                OnPropertyChanged("Weight");
+            }
+        }
 
         public Item(string name, int cost, double weight)
         {
-            this.Name = name;
-            this.Cost = cost;
-            this.Weight = weight;
+            this.name = name;
+            this.cost = cost;
+            this.weight = weight;
         }
 
         public Item(string name) : this(name, 0, 0) { }

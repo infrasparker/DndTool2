@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,17 +18,49 @@ namespace DnDTool2.Model
         private int baseAC, strReq;
         private bool stealthDisadv;
 
-        public ArmorType Type { get => type; set => type = value; }
-        public int BaseAC { get => baseAC; set => baseAC = value; }
-        public int StrReq { get => strReq; set => strReq = value; }
-        public bool StealthDisadv { get => stealthDisadv; set => stealthDisadv = value; }
+        public ArmorType Type
+        {
+            get => type;
+            set
+            {
+                type = value;
+                OnPropertyChanged("Type");
+            }
+        }
+        public int BaseAC
+        {
+            get => baseAC;
+            set
+            {
+                baseAC = value;
+                OnPropertyChanged("BaseAC");
+            }
+        }
+        public int StrReq
+        {
+            get => strReq;
+            set
+            {
+                strReq = value;
+                OnPropertyChanged("StrReq");
+            }
+        }
+        public bool StealthDisadv
+        {
+            get => stealthDisadv;
+            set
+            {
+                stealthDisadv = value;
+                OnPropertyChanged("StealthDisadv");
+            }
+        }
 
         public Armor(string name, int cost, double weight, ArmorType type, int baseAC, int strReq, bool stealthDisadv) : base(name, cost, weight)
         {
-            this.Type = type;
-            this.BaseAC = baseAC;
-            this.StrReq = strReq;
-            this.StealthDisadv = stealthDisadv;
+            this.type = type;
+            this.baseAC = baseAC;
+            this.strReq = strReq;
+            this.stealthDisadv = stealthDisadv;
         }
 
         // No stealth disadvantage
@@ -45,6 +78,24 @@ namespace DnDTool2.Model
         public override string ToString()
         {
             return Name;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return GetHashCode() == obj.GetHashCode();
+        }
+
+        public override int GetHashCode()
+        {
+            int hash = 17;
+            hash = hash * 23 + name.GetHashCode();
+            hash = hash * 23 + cost.GetHashCode();
+            hash = hash * 23 + weight.GetHashCode();
+            hash = hash * 23 + type.GetHashCode();
+            hash = hash * 23 + baseAC.GetHashCode();
+            hash = hash * 23 + strReq.GetHashCode();
+            hash = hash * 23 + stealthDisadv.GetHashCode();
+            return hash;
         }
 
         public static List<Armor> GetStandardArmors()
