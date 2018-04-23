@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DnDTool2.ViewModel;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -23,6 +24,7 @@ namespace DnDTool2.View
         public SpellTome()
         {
             InitializeComponent();
+            this.DataContext = new SpellTomeVM();
         }
     }
 }

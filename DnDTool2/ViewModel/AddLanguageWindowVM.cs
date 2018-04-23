@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace DnDTool2.ViewModel
 {
-    public class AddLanguagePageVM : ViewModel
+    public class AddLanguageWindowVM : ViewModel
     {
         public Creature Creature { get; set; }
 
@@ -25,7 +25,7 @@ namespace DnDTool2.ViewModel
         private bool editing;
         public bool Editing { get => editing; set { editing = value; OnPropertyChanged("Editing"); } }
 
-        public AddLanguagePageVM(Creature creature)
+        public AddLanguageWindowVM(Creature creature)
         {
             this.Creature = creature;
             AddLanguageCommand = new RelayCommand(AddLanguage);

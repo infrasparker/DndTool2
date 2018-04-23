@@ -1,5 +1,6 @@
 ﻿using DnDTool2.Model;
 using DnDTool2.ViewModel;
+using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -18,14 +19,14 @@ using System.Windows.Shapes;
 namespace DnDTool2.View
 {
     /// <summary>
-    /// Interaction logic for AddCreaturePage.xaml
+    /// Interaction logic for AddSpellWindow.xaml
     /// </summary>
-    public partial class AddCreaturePage : Page
+    public partial class AddSpellWindow : MetroWindow
     {
-        public AddCreaturePage(ObservableCollection<Creature> creatures)
+        public AddSpellWindow(ObservableCollection<Spell> spells)
         {
             InitializeComponent();
-            this.DataContext = new AddCreaturePageVM(creatures);
+            this.DataContext = new AddSpellWindowVM(spells);
         }
     }
 }

@@ -72,20 +72,23 @@
     <Compile Include="Model\Item.cs" />
     <Compile Include="Model\ObservableClass.cs" />
     <Compile Include="Model\RelayCommand.cs" />
-    <Compile Include="ViewModel\AddCreaturePageVM.cs" />
-    <Compile Include="ViewModel\AddLanguagePageVM.cs" />
+    <Compile Include="Model\Spell.cs" />
+    <Compile Include="ViewModel\AddCreatureWindowVM.cs" />
+    <Compile Include="ViewModel\AddLanguageWindowVM.cs" />
+    <Compile Include="ViewModel\AddSpellWindowVM.cs" />
     <Compile Include="ViewModel\MonsterManualVM.cs" />
     <Compile Include="ViewModel\RegisterPageVM.cs" />
     <Compile Include="ViewModel\LoginPageVM.cs" />
+    <Compile Include="ViewModel\SpellTomeVM.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
-    <Compile Include="View\AddCreaturePage.xaml.cs">
-      <DependentUpon>AddCreaturePage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\AddCreatureWindow.xaml.cs">
       <DependentUpon>AddCreatureWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\AddLanguagePage.xaml.cs">
-      <DependentUpon>AddLanguagePage.xaml</DependentUpon>
+    <Compile Include="View\AddLanguageWindow.xaml.cs">
+      <DependentUpon>AddLanguageWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\AddSpellWindow.xaml.cs">
+      <DependentUpon>AddSpellWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="View\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
@@ -105,15 +108,15 @@
     <Compile Include="View\SpellTome.xaml.cs">
       <DependentUpon>SpellTome.xaml</DependentUpon>
     </Compile>
-    <Page Include="View\AddCreaturePage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\AddCreatureWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="View\AddLanguagePage.xaml">
+    <Page Include="View\AddLanguageWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="View\AddSpellWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

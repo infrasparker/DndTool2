@@ -21,11 +21,11 @@ namespace DnDTool2.View
     /// <summary>
     /// Interaction logic for AddLanguagePage.xaml
     /// </summary>
-    public partial class AddLanguagePage : MetroWindow
+    public partial class AddLanguageWindow : MetroWindow
     {
-        public AddLanguagePage(Creature creature)
+        public AddLanguageWindow(Creature creature)
         {
-            this.DataContext = new AddLanguagePageVM(creature);
+            this.DataContext = new AddLanguageWindowVM(creature);
             InitializeComponent();
         }
     }

@@ -1,4 +1,5 @@
 ﻿using DnDTool2.Model;
+using DnDTool2.ViewModel;
 using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
@@ -22,13 +23,11 @@ namespace DnDTool2.View
     /// </summary>
     public partial class AddCreatureWindow : MetroWindow
     {
-        public ObservableCollection<Creature> Creatures { get; set; }
 
         public AddCreatureWindow(ObservableCollection<Creature> creatures)
         {
             InitializeComponent();
-            this.Creatures = creatures;
-            DisplayFrame.Navigate(new AddCreaturePage(creatures));
+            this.DataContext = new AddCreatureWindowVM(creatures);
         }
     }
 }

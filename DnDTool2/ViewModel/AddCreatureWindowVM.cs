@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace DnDTool2.ViewModel
 {
-    public class AddCreaturePageVM : ViewModel
+    public class AddCreatureWindowVM : ViewModel
     {
         public List<CreatureSize> CreatureSizes { get; set; }
         public List<CreatureType> CreatureTypes { get; set; }
@@ -42,7 +42,7 @@ namespace DnDTool2.ViewModel
 
         public Creature Creature { get; set; }
 
-        public AddCreaturePageVM(ObservableCollection<Creature> creatures)
+        public AddCreatureWindowVM(ObservableCollection<Creature> creatures)
         {
             this.creatures = creatures;
             CreatureSizes = Enum.GetValues(typeof(CreatureSize)).Cast<CreatureSize>().ToList();
@@ -78,7 +78,7 @@ namespace DnDTool2.ViewModel
 
         private void OpenLanguages(object parameter)
         {
-            (new AddLanguagePage(Creature)).Show();
+            (new AddLanguageWindow(Creature)).Show();
         }
     }
 }
