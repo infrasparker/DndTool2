@@ -9,6 +9,6 @@
         Title="MenuWindow" Height="720" Width="1280"
         WindowStartupLocation="CenterScreen">
     <Grid>
-        <Frame Source="MenuPage.xaml" NavigationUIVisibility="Hidden"/>
+        <Frame Name="DisplayFrame" NavigationUIVisibility="Hidden"/>
     </Grid>
 </Controls:MetroWindow>

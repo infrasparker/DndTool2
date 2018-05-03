@@ -21,10 +21,10 @@ namespace DnDTool2.View
     /// </summary>
     public partial class MonsterManual : Page
     {
-        public MonsterManual()
+        public MonsterManual(Window window)
         {
             InitializeComponent();
-            this.DataContext = new MonsterManualVM();
+            this.DataContext = new MonsterManualVM(window);
         }
     }
 }

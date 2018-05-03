@@ -3,9 +3,11 @@ using DnDTool2.View;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DnDTool2.ViewModel
 {
@@ -34,15 +36,21 @@ namespace DnDTool2.ViewModel
         public RelayCommand AddLanguageCommand { get; set; }
         public RelayCommand OpenLanguagesCommand { get; set; }
 
+        public int TabIndex { get; set; }
+
         private string abilityNameBox, abilityDescBox;
         public string AbilityNameBox { get => abilityNameBox; set { abilityNameBox = value; OnPropertyChanged("AbilityNameBox"); } }
         public string AbilityDescBox { get => abilityDescBox; set { abilityDescBox = value; OnPropertyChanged("AbilityDescBox"); } }
+        public RelayCommand AddAbilityCommand { get; set; }
+
+        public List<string> StatNames { get; set; }
+        public string CurrentStat { get; set; }
 
         public ObservableCollection<Creature> creatures;
 
         public Creature Creature { get; set; }
 
-        public AddCreatureWindowVM(ObservableCollection<Creature> creatures)
+        public AddCreatureWindowVM(Window window, ObservableCollection<Creature> creatures) : base(window)
         {
             this.creatures = creatures;
             CreatureSizes = Enum.GetValues(typeof(CreatureSize)).Cast<CreatureSize>().ToList();
@@ -59,6 +67,8 @@ namespace DnDTool2.ViewModel
 
             AddLanguageCommand = new RelayCommand(AddLanguage);
             OpenLanguagesCommand = new RelayCommand(OpenLanguages);
+            AddAbilityCommand = new RelayCommand(AddAbility);
+            StatNames = Creature.GetStatNames().ToList();
 
             this.Creature = new Creature("Creature Name", 10, 10, 10, 10, 10, 10);
         }
@@ -73,6 +83,21 @@ namespace DnDTool2.ViewModel
                     this.Creature.AddLanguage(lang);
                 }
                 LangBox = "";
+            }
+        }
+
+        private void AddAbility(object parameter)
+        {
+            if (AbilityNameBox != "" && AbilityNameBox != null)
+            {
+                string name = CultureInfo.CurrentCulture.TextInfo.ToTitleCase(AbilityNameBox.ToLower());
+                if (name == "Legendary Resistance")
+                    throw new ApplicationException("Use Legendary Resistance tab");
+                else
+                {
+                    Creature.AddAbility(new InfoClass(name, AbilityDescBox, Creature.Name));
+                }
+                AbilityNameBox = "";
             }
         }
 

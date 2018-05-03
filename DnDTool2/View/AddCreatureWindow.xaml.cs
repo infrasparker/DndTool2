@@ -27,7 +27,7 @@ namespace DnDTool2.View
         public AddCreatureWindow(ObservableCollection<Creature> creatures)
         {
             InitializeComponent();
-            this.DataContext = new AddCreatureWindowVM(creatures);
+            this.DataContext = new AddCreatureWindowVM(this, creatures);
         }
     }
 }

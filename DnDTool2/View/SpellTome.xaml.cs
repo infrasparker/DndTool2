@@ -21,10 +21,10 @@ namespace DnDTool2.View
     /// </summary>
     public partial class SpellTome : Page
     {
-        public SpellTome()
+        public SpellTome(Window window)
         {
             InitializeComponent();
-            this.DataContext = new SpellTomeVM();
+            this.DataContext = new SpellTomeVM(window);
         }
     }
 }

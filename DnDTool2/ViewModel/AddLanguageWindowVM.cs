@@ -5,6 +5,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DnDTool2.ViewModel
 {
@@ -25,7 +26,7 @@ namespace DnDTool2.ViewModel
         private bool editing;
         public bool Editing { get => editing; set { editing = value; OnPropertyChanged("Editing"); } }
 
-        public AddLanguageWindowVM(Creature creature)
+        public AddLanguageWindowVM(Window window, Creature creature) : base(window)
         {
             this.Creature = creature;
             AddLanguageCommand = new RelayCommand(AddLanguage);
@@ -43,7 +44,6 @@ namespace DnDTool2.ViewModel
                 if (!this.Creature.Languages.Contains(lang))
                 {
                     this.Creature.AddLanguage(lang);
-                    this.Creature.SortLanguages();
                 }
                 LangBox = "";
             }

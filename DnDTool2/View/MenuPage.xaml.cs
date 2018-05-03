@@ -20,14 +20,17 @@ namespace DnDTool2.View
     /// </summary>
     public partial class MenuPage : Page
     {
-        public MenuPage()
+        private Window window;
+
+        public MenuPage(Window window)
         {
             InitializeComponent();
+            this.window = window;
         }
 
         private void MonsterManualButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new MonsterManual());
+            NavigationService.Navigate(new MonsterManual(window));
         }
 
         private void CharacterVaultButton_Click(object sender, RoutedEventArgs e)
@@ -37,7 +40,7 @@ namespace DnDTool2.View
 
         private void SpellTomeButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigationService.Navigate(new SpellTome());
+            NavigationService.Navigate(new SpellTome(window));
         }
 
         private void ItemCompendium_Click(object sender, RoutedEventArgs e)

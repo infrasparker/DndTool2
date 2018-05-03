@@ -40,6 +40,9 @@
     <Reference Include="MahApps.Metro, Version=1.6.1.4, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MahApps.Metro.1.6.1\lib\net45\MahApps.Metro.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Windows.Interactivity, Version=4.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
@@ -69,7 +72,9 @@
     <Compile Include="Model\Creature.cs" />
     <Compile Include="Model\CreatureAbilities.cs" />
     <Compile Include="Model\Die.cs" />
+    <Compile Include="Model\FileIO.cs" />
     <Compile Include="Model\Item.cs" />
+    <Compile Include="Model\Language.cs" />
     <Compile Include="Model\ObservableClass.cs" />
     <Compile Include="Model\RelayCommand.cs" />
     <Compile Include="Model\Spell.cs" />

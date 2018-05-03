@@ -25,6 +25,10 @@ namespace DnDTool2.Model
         TWELVE, THIRTEEN, FOURTEEN, FIFTEEN, SIXTEEN, SEVENTEEN, EIGHTEEN, NINETEEN, TWENTY, TWENTY_ONE, TWENTY_TWO,
         TWENTY_THREE, TWENTY_FOUR, TWENTY_FIVE, TWENTY_SIX, TWENTY_SEVEN, TWENTY_EIGHT, TWENTY_NINE, THIRTY
     }
+    public enum StatType
+    {
+        STRENGTH, DEXTERITY, CONSTITUTION, INTELLIGENCE, WISDOM, CHARISMA
+    }
     public enum SkillType
     {
         ATHLETICS, ACROBATICS, SLEIGHT_OF_HAND, STEALTH, ARCANA, HISTORY, INVESTIGATION, NATURE, RELIGION, ANIMAL_HANDLING, INSIGHT,
@@ -1259,7 +1263,6 @@ namespace DnDTool2.Model
             get => 10 + GetSkill("Perception") + (perceptionAdvantage ? 5 : 0);
         }
 
-
         private ObservableCollection<string> languages;
         public ObservableCollection<string> Languages
         {
@@ -1281,8 +1284,27 @@ namespace DnDTool2.Model
                 return (ret == "" ? ret : ret.Substring(2));
             }
         }
+        private int extraLanguages;
+        public int ExtraLanguages
+        {
+            get => extraLanguages;
+            set
+            {
+                extraLanguages = value;
+                OnPropertyChanged("ExtraLanguages");
+            }
+        }
 
-        private int otherLanguages;
+        private ObservableCollection<InfoClass> abilities;
+        public ObservableCollection<InfoClass> Abilities
+        {
+            get => abilities;
+            set
+            {
+                abilities = value;
+                OnPropertyChanged("Abilities");
+            }
+        }
 
         public Creature(string name, CreatureSize size, CreatureType type, Alignment alignment,
             int ac, Armor armor, bool shield, bool naturalArmor, int naturalArmorAC, bool mageArmor, bool barkskin,
@@ -1292,7 +1314,8 @@ namespace DnDTool2.Model
             int[] scores, int[] mods, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
             int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside, bool perceptionAdvantage,
-            ObservableCollection<string> languages, int otherLanguages)
+            ObservableCollection<string> languages, int extraLanguages,
+            ObservableCollection<InfoClass> abilities)
         {
             this.name = name;
             this.size = size;
@@ -1336,7 +1359,9 @@ namespace DnDTool2.Model
             this.perceptionAdvantage = perceptionAdvantage;
 
             this.languages = languages;
-            this.otherLanguages = otherLanguages;
+            this.extraLanguages = extraLanguages;
+
+            this.abilities = abilities;
         }
 
         public Creature(string name, CreatureSize size, CreatureType type, Alignment alignment,
@@ -1347,7 +1372,8 @@ namespace DnDTool2.Model
             int[] scores, bool[] saves, SkillProficiencyType[] skills,
             DamageEffect[] damageEffects, bool[] conditionImmunities,
             int darkvision, int blindsight, int tremorsense, int truesight, bool blindOutside, bool perceptionAdvantage,
-            ObservableCollection<string> languages, int otherLanguages) :
+            ObservableCollection<string> languages, int extraLanguages,
+            ObservableCollection<InfoClass> abilities) :
             this(name, size, type, alignment,
                 ac, armor, shield, naturalArmor, naturalArmorAC, mageArmor, barkskin,
                 hp, hdCount, hd,
@@ -1356,7 +1382,8 @@ namespace DnDTool2.Model
                 scores, ScoresToMods(scores), saves, skills,
                 damageEffects, conditionImmunities,
                 darkvision, blindsight, tremorsense, truesight, blindOutside, perceptionAdvantage,
-                languages, otherLanguages)
+                languages, extraLanguages,
+                abilities)
         { }
 
         public Creature(string name, int strScore, int dexScore, int conScore, int intScore, int wisScore, int chaScore)
@@ -1458,9 +1485,9 @@ namespace DnDTool2.Model
             this.perceptionAdvantage = false;
 
             this.languages = new ObservableCollection<string>();
-            this.otherLanguages = 0;
+            this.extraLanguages = 0;
 
-            OnPropertyChanged("Armor");
+            this.abilities = new ObservableCollection<InfoClass>();
         }
 
         public Creature() : this("", 10, 10, 10, 10, 10, 10) { }
@@ -1468,6 +1495,7 @@ namespace DnDTool2.Model
         public void AddLanguage(string lang)
         {
             languages.Add(lang);
+            SortLanguages();
             OnPropertyChanged("LanguageString");
             OnPropertyChanged("Languages");
         }
@@ -1479,11 +1507,30 @@ namespace DnDTool2.Model
             OnPropertyChanged("Languages");
         }
 
-        public void SortLanguages()
+        private void SortLanguages()
         {
             languages = new ObservableCollection<string>(languages.OrderBy(lang => lang));
             OnPropertyChanged("Languages");
             OnPropertyChanged("LanguageString");
+        }
+
+        public void AddAbility(InfoClass ability)
+        {
+            abilities.Add(ability);
+            SortAbilities();
+            OnPropertyChanged("Abilities");
+        }
+
+        public void RemoveAbility(InfoClass ability)
+        {
+            abilities.Remove(ability);
+            OnPropertyChanged("Abilities");
+        }
+
+        private void SortAbilities()
+        {
+            abilities = new ObservableCollection<InfoClass>(abilities.OrderBy(a => a.Name));
+            OnPropertyChanged("Abilities");
         }
 
         private static Die CreatureSizeToHitDie(CreatureSize size)

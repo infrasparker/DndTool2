@@ -25,7 +25,7 @@ namespace DnDTool2.View
     {
         public AddLanguageWindow(Creature creature)
         {
-            this.DataContext = new AddLanguageWindowVM(creature);
+            this.DataContext = new AddLanguageWindowVM(this, creature);
             InitializeComponent();
         }
     }

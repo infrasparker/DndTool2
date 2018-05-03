@@ -20,7 +20,7 @@
 
         <Button Content="Monster Manual" HorizontalAlignment="Center" VerticalAlignment="Center" Click="MonsterManualButton_Click"/>
         <Button Content="Character Vault" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-        <Button Content="Spell Tome" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <Button Content="Spell Tome" Grid.Column="1" HorizontalAlignment="Center" VerticalAlignment="Center" Click="SpellTomeButton_Click"/>
         <Button Content="Item Compendium" Grid.Column="1" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center"/>
     </Grid>
 </Page>

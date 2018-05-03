@@ -318,7 +318,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Content="Extra Languages"/>
-                        <mah:NumericUpDown Grid.Column="1" Minimum="0"/>
+                        <mah:NumericUpDown Grid.Column="1" Minimum="0" Value="{Binding Creature.ExtraLanguages}"/>
                         <TextBox Grid.Column="3" Margin="0, 0, 5, 0" Text="{Binding LangBox, UpdateSourceTrigger=PropertyChanged}">
                             <TextBox.InputBindings>
                                 <KeyBinding Key="Return" Command="{Binding AddLanguageCommand}"/>
@@ -1259,7 +1259,7 @@
                             <ColumnDefinition/>
                         </Grid.ColumnDefinitions>
 
-                        <mah:MetroAnimatedSingleRowTabControl Margin="0, 0, 5, 0">
+                        <mah:MetroAnimatedSingleRowTabControl Margin="0, 0, 5, 0" SelectedIndex="{Binding TabIndex}">
                             <mah:MetroAnimatedSingleRowTabControl.Resources>
                                 <Style TargetType="{x:Type TabItem}" BasedOn="{StaticResource {x:Type TabItem}}">
                                     <Setter Property="mah:ControlsHelper.HeaderFontSize" Value="12"/>
@@ -1272,8 +1272,9 @@
                                     <TextBox Text="{Binding AbilityNameBox}"/>
                                     <Label FontSize="10" Content="Description"/>
                                     <TextBox Text="{Binding AbilityDescBox}" Height="300" Margin="0, 0, 0, 5"
-                                             VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"/>
-                                    <Button Width="80" HorizontalAlignment="Right" Content="Add"/>
+                                             VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" AcceptsReturn="True" AcceptsTab="True"
+                                             ToolTip="To have the creature name autofilled, use [creature]"/>
+                                    <Button Width="80" HorizontalAlignment="Right" Content="Add" Command="{Binding AddAbilityCommand}"/>
                                 </StackPanel>
                             </TabItem>
 
@@ -1282,7 +1283,77 @@
                                     <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="12" Background="Black" />
                                 </TabItem.Header>
                             </TabItem>
+
+                            <TabItem Header="Legendary Resistance">
+                                <StackPanel>
+                                    <Separator Background="Red"/>
+                                    <Grid Margin="0, 0, 0, 5">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Content="Legendary Resistances"/>
+                                        <mah:NumericUpDown Grid.Column="1" Minimum="1" Value="{Binding AbilityNameBox}"/>
+                                        <Label Grid.Column="2" Content="per day"/>
+                                    </Grid>
+                                    <Button Width="80" HorizontalAlignment="Right" Content="Add" Command="{Binding AddAbilityCommand}"/>
+                                </StackPanel>
+                            </TabItem>
+
+                            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                                <TabItem.Header>
+                                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="12" Background="Black" />
+                                </TabItem.Header>
+                            </TabItem>
+
+                            <TabItem Header="Innate Spellcasting">
+                                <StackPanel>
+                                    <Separator Background="Red"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="1*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Content="Spellcasting Ability"/>
+                                        <ComboBox Grid.Column="1" ItemsSource="{Binding StatNames}" SelectedItem="{Binding CurrentStat}">
+                                            
+                                        </ComboBox>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
+                            
+                            <TabItem IsEnabled="False" IsHitTestVisible="False">
+                                <TabItem.Header>
+                                    <Separator Style="{StaticResource {x:Static ToolBar.SeparatorStyleKey}}" Height="12" Background="Black" />
+                                </TabItem.Header>
+                            </TabItem>
+
+                            <TabItem Header="Spellcasting">
+                                <StackPanel>
+                                    <Separator Background="Red"/>
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="2*"/>
+                                            <ColumnDefinition Width="1*"/>
+                                        </Grid.ColumnDefinitions>
+
+                                        <Label Content="Legendary Resistances"/>
+                                        <mah:NumericUpDown Grid.Column="1" Minimum="1" Value="{Binding AbilityNameBox}"/>
+                                    </Grid>
+                                </StackPanel>
+                            </TabItem>
                         </mah:MetroAnimatedSingleRowTabControl>
+
+                        <ListView Grid.Column="1" Height="550" Margin="5, 0, 0, 0" ItemsSource="{Binding Creature.Abilities}">
+                            <ListView.View>
+                                <GridView>
+                                    <GridViewColumn Width="200" Header="Ability Name" DisplayMemberBinding="{Binding Name}"/>
+                                </GridView>
+                            </ListView.View>
+                        </ListView>
 
                     </Grid>
                     <Separator Background="Red"/>

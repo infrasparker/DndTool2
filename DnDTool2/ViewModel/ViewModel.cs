@@ -4,12 +4,18 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DnDTool2.ViewModel
 {
     public abstract class ViewModel : INotifyPropertyChanged
     {
-        protected ViewModel() { }
+        public Window window;
+
+        protected ViewModel(Window window)
+        {
+            this.window = window;
+        }
 
         public event PropertyChangedEventHandler PropertyChanged;
 

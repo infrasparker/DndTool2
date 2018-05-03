@@ -5,12 +5,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:DnDTool2.View"
+        xmlns:model="clr-namespace:DnDTool2.Model"
         mc:Ignorable="d"
         Title="AddSpellWindow" Height="480" Width="600">
-    <StackPanel>
-        <StackPanel.Resources>
+    <Window.Resources>
+        <model:GenericEnumConverter x:Key="GenericEnumConverter"/>
+        <model:AlignmentEnumConverter x:Key="AlignmentEnumConverter"/>
+        <model:SkillTypeEnumConverter x:Key="SkillTypeEnumConverter"/>
+        <model:ModEquationConverter x:Key="ModEquationConverter"/>
+        <model:ModDisplayConverter x:Key="ModDisplayConverter"/>
+        <model:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+        <model:BooleanToVisibilityInvertedConverter x:Key="BooleanToVisibilityInvertedConverter"/>
+        <model:EnumComparatorToVisibilityConverter x:Key="EnumComparatorToVisibilityConverter"/>
+        <model:EnumComparatorToBooleanConverter x:Key="EnumComparatorToBooleanConverter"/>
+        <model:DamageTypeEnumConverter x:Key="DamageTypeEnumConverter"/>
+        <model:CastingTimeTypeEnumConverter x:Key="CastingTimeTypeEnumConverter"/>
+    </Window.Resources>
+    
+    <DockPanel>
+        <DockPanel.Resources>
             <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource {x:Type Separator}}">
-                <Setter Property="Width" Value="750"/>
+                <Setter Property="Width" Value="550"/>
                 <Setter Property="Height" Value="10"/>
                 <Setter Property="Background" Value="LightGray"/>
             </Style>
@@ -23,30 +38,164 @@
             <Style TargetType="FrameworkElement" x:Key="SpacingInternal">
                 <Setter Property="Margin" Value="30, 0, 30, 5"/>
             </Style>
-        </StackPanel.Resources>
+        </DockPanel.Resources>
 
-        <Separator Background="Red"/>
+        <Separator DockPanel.Dock="Top" Background="Red"/>
 
-        <Grid Style="{StaticResource Spacing}" ToolTip="The name of the creature.">
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="1*"/>
+                <ColumnDefinition Width="4*"/>
             </Grid.ColumnDefinitions>
 
             <Label Content="Name"/>
             <TextBox Grid.Column="1" Text="{Binding Spell.Name}"/>
         </Grid>
-        <Separator/>
-        <Grid Style="{StaticResource Spacing}" ToolTip="The name of the creature.">
+        <Separator DockPanel.Dock="Top" />
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="100"/>
-                <ColumnDefinition Width="80"/>
-                <ColumnDefinition Width="150"/>
-                <ColumnDefinition/>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="6*"/>
             </Grid.ColumnDefinitions>
 
             <Label Content="Spell Level"/>
             <mah:NumericUpDown Grid.Column="1" Value="{Binding Spell.Level}" Minimum="0" Maximum="9"/>
+            <Label Grid.Column="2" HorizontalAlignment="Right" Content="School of Magic"/>
+            <ComboBox Grid.Column="3" ItemsSource="{Binding Schools}" SelectedItem="{Binding Spell.School}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
         </Grid>
-    </StackPanel>
+        <Separator DockPanel.Dock="Top" />
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="17*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Casting Time"/>
+            <ComboBox Grid.Column="1" Margin="0, 0, 5, 0" ItemsSource="{Binding CastingTimes}" SelectedItem="{Binding CastingTimeType}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource CastingTimeTypeEnumConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Grid Grid.Column="2" Visibility="{Binding Path=CastingTimeType, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='REACTION'}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="14*"/>
+                </Grid.ColumnDefinitions>
+                
+                <Label HorizontalAlignment="Right" Content="Trigger"/>
+                <TextBox Grid.Column="1" Text="{Binding Spell.Trigger}"/>
+            </Grid>
+            <Grid Grid.Column="2" Visibility="{Binding Path=CastingTimeType, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='MINUTES|HOURS'}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="9*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label HorizontalAlignment="Right" Content="Amount"/>
+                <mah:NumericUpDown Grid.Column="1" Value="{Binding Spell.CastTime}" Minimum="1"/>
+            </Grid>
+        </Grid>
+        <Separator DockPanel.Dock="Top" />
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="17*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Range"/>
+            <ComboBox Grid.Column="1" Margin="0, 0, 5, 0" ItemsSource="{Binding Ranges}" SelectedItem="{Binding Spell.RangeType}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Grid Grid.Column="2" Visibility="{Binding Path=Spell.RangeType, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='FEET|MILES'}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="5*"/>
+                    <ColumnDefinition Width="9*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label HorizontalAlignment="Right" Content="Amount"/>
+                <mah:NumericUpDown Grid.Column="1" Value="{Binding Spell.Range}" Minimum="1"/>
+            </Grid>
+        </Grid>
+        <Separator DockPanel.Dock="Top" />
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="6*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Components"/>
+            <CheckBox Grid.Column="1" Content="Verbal" IsChecked="{Binding Spell.Verbal}"/>
+            <CheckBox Grid.Column="2" Content="Somatic" IsChecked="{Binding Spell.Somatic}"/>
+            <CheckBox Grid.Column="3" Content="Material" IsChecked="{Binding Spell.Material}"/>
+            <TextBox Grid.Column="4" Text="{Binding Spell.Materials}"
+                     Visibility="{Binding Path=Spell.Material, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+        </Grid>
+        <Separator DockPanel.Dock="Top" />
+        <Grid DockPanel.Dock="Top" Style="{StaticResource Spacing}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="6*"/>
+                <ColumnDefinition Width="7*"/>
+                <ColumnDefinition Width="8*"/>
+                <ColumnDefinition Width="9*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label Content="Duration"/>
+            <ComboBox Grid.Column="1" Margin="0, 0, 5, 0" ItemsSource="{Binding Durations}" SelectedItem="{Binding Spell.DurationType}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource GenericEnumConverter}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+            <Grid Grid.Column="2" Visibility="{Binding Path=Spell.DurationType, Converter={StaticResource EnumComparatorToVisibilityConverter}, ConverterParameter='ROUNDS|MINUTES|HOURS|DAYS'}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition Width="5*"/>
+                </Grid.ColumnDefinitions>
+
+                <Label HorizontalAlignment="Right" Content="Amount"/>
+                <mah:NumericUpDown Grid.Column="1" Value="{Binding Spell.Duration}" Minimum="1"/>
+            </Grid>
+
+            <CheckBox Grid.Column="3" Margin="5, 0, 0, 0" Content="Concentration" IsChecked="{Binding Spell.Concentration}"/>
+        </Grid>
+        <Separator DockPanel.Dock="Top" Background="Red"/>
+        <Separator DockPanel.Dock="Bottom" Background="Red"/>
+        <Button DockPanel.Dock="Bottom" Content="Create Spell" HorizontalAlignment="Right" Margin="0, 0, 30, 0" Width="100"
+                Command="{Binding CreateSpellCommand}"/>
+        <Separator DockPanel.Dock="Bottom" Background="Red"/>
+        <Grid DockPanel.Dock="Bottom" Style="{StaticResource Spacing}">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition/>
+                <ColumnDefinition Width="4*"/>
+            </Grid.ColumnDefinitions>
+
+            <Label VerticalAlignment="Center" Content="Effect"/>
+            <TextBox VerticalAlignment="Stretch" Grid.Column="1" Text="{Binding Spell.Description}" VerticalScrollBarVisibility="Visible" TextWrapping="Wrap" AcceptsTab="True" AcceptsReturn="True"/>
+        </Grid>
+    </DockPanel>
 </mah:MetroWindow>

@@ -6,10 +6,11 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace DnDTool2.ViewModel
 {
-    public class MonsterManualVM
+    public class MonsterManualVM : ViewModel
     {
         private ObservableCollection<Creature> creatures;
 
@@ -17,7 +18,7 @@ namespace DnDTool2.ViewModel
 
         public RelayCommand OpenAddCreatureCommand { get; set; }
 
-        public MonsterManualVM()
+        public MonsterManualVM(Window window) : base(window)
         {
             Creatures = new ObservableCollection<Creature>
             {

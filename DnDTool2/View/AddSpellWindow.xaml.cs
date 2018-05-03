@@ -4,6 +4,7 @@ using MahApps.Metro.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -23,10 +24,12 @@ namespace DnDTool2.View
     /// </summary>
     public partial class AddSpellWindow : MetroWindow
     {
-        public AddSpellWindow(ObservableCollection<Spell> spells)
+        public AddSpellWindow(SpellList spells, Spell spell)
         {
             InitializeComponent();
-            this.DataContext = new AddSpellWindowVM(spells);
+            this.DataContext = new AddSpellWindowVM(this, spells, spell);
         }
+
+        public AddSpellWindow(SpellList spells) : this(spells, new Spell()) { }
     }
 }

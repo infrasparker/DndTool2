@@ -10,17 +10,17 @@ namespace DnDTool2.Model
     {
         ABJURATION, CONJURATION, DIVINATION, ENCHANTMENT, EVOCATION, ILLUSION, NECROMANCY, TRANSMUTATION
     }
-    public enum CastTime
+    public enum CastTimeType
     {
-        ACTION, BONUSACTION, REACTION, MINUTE, HOUR
+        ACTION, BONUS, REACTION, MINUTES, HOURS
     }
     public enum RangeType
     {
-        SELF, TOUCH, RANGE, SIGHT
+        SELF, TOUCH, SIGHT, FEET, MILES
     }
     public enum DurationType
     {
-        ROUND, MINUTE, HOUR, DAY
+        INSTANTANEOUS, ROUNDS, MINUTES, HOURS, DAYS
     }
 
     public class Spell : ObservableClass
@@ -58,14 +58,25 @@ namespace DnDTool2.Model
             }
         }
 
-        private CastTime castTime;
-        public CastTime CastTime
+
+        private int castTime;
+        public int CastTime
         {
             get => castTime;
             set
             {
                 castTime = value;
                 OnPropertyChanged("CastTime");
+            }
+        }
+        private CastTimeType castTimeType;
+        public CastTimeType CastTimeType
+        {
+            get => castTimeType;
+            set
+            {
+                castTimeType = value;
+                OnPropertyChanged("CastTimeType");
             }
         }
 
@@ -90,6 +101,16 @@ namespace DnDTool2.Model
                 OnPropertyChanged("RangeType");
             }
         }
+        private string trigger;
+        private string Trigger
+        {
+            get => trigger;
+            set
+            {
+                trigger = value;
+                OnPropertyChanged("Trigger");
+            }
+        }
 
         private bool verbal, somatic, material;
         public bool Verbal
@@ -101,7 +122,7 @@ namespace DnDTool2.Model
                 OnPropertyChanged("Verbal");
             }
         }
-        public bool Solmatic
+        public bool Somatic
         {
             get => somatic;
             set
@@ -175,7 +196,8 @@ namespace DnDTool2.Model
             }
         }
 
-        public Spell(string name, int level, School school, CastTime castTime, int range, RangeType rangeType,
+        public Spell(string name, int level, School school,
+                    int castTime, CastTimeType castTimeType, string trigger, int range, RangeType rangeType,
                     bool verbal, bool somatic, bool material, string materials,
                     bool concentration, int duration, DurationType durationType, string description)
         {
@@ -183,6 +205,7 @@ namespace DnDTool2.Model
             this.level = level;
             this.school = school;
             this.castTime = castTime;
+            this.trigger = trigger;
             this.range = range;
             this.rangeType = rangeType;
             this.verbal = verbal;
@@ -193,6 +216,74 @@ namespace DnDTool2.Model
             this.duration = duration;
             this.durationType = durationType;
             this.description = description;
+        }
+
+        public Spell(string name, int level) : this(name, level, School.ABJURATION,
+                    1, CastTimeType.ACTION, "", 0, RangeType.SELF,
+                    true, true, false, "",
+                    false, 0, DurationType.INSTANTANEOUS, "")
+        { }
+
+        public Spell() : this("", 0) { }
+
+        public static List<Spell> GetSpells()
+        {
+            List<Spell> spells = new List<Spell>();
+            string[] files = FileIO.GetFiles("\\archive\\spells");
+            foreach (string s in files)
+            {
+                spells.Add(FileIO.LoadJson<Spell>(s));
+            }
+            return spells;
+        }
+
+        public static int[] GetStandardSlots(int level)
+        {
+            switch (level)
+            {
+                case 1:
+                    return new int[9] { 2, 0, 0, 0, 0, 0, 0, 0, 0 };
+                case 2:
+                    return new int[9] { 3, 0, 0, 0, 0, 0, 0, 0, 0 };
+                case 3:
+                    return new int[9] { 4, 2, 0, 0, 0, 0, 0, 0, 0 };
+                case 4:
+                    return new int[9] { 4, 3, 0, 0, 0, 0, 0, 0, 0 };
+                case 5:
+                    return new int[9] { 4, 3, 2, 0, 0, 0, 0, 0, 0 };
+                case 6:
+                    return new int[9] { 4, 3, 3, 0, 0, 0, 0, 0, 0 };
+                case 7:
+                    return new int[9] { 4, 3, 3, 1, 0, 0, 0, 0, 0 };
+                case 8:
+                    return new int[9] { 4, 3, 3, 2, 0, 0, 0, 0, 0 };
+                case 9:
+                    return new int[9] { 4, 3, 3, 3, 1, 0, 0, 0, 0 };
+                case 10:
+                    return new int[9] { 4, 3, 3, 3, 2, 0, 0, 0, 0 };
+                case 11:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 0, 0, 0 };
+                case 12:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 0, 0, 0 };
+                case 13:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 1, 0, 0 };
+                case 14:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 1, 0, 0 };
+                case 15:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 1, 1, 0 };
+                case 16:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 1, 1, 0 };
+                case 17:
+                    return new int[9] { 4, 3, 3, 3, 2, 1, 1, 1, 1 };
+                case 18:
+                    return new int[9] { 4, 3, 3, 3, 3, 1, 1, 1, 1 };
+                case 19:
+                    return new int[9] { 4, 3, 3, 3, 3, 2, 1, 1, 1 };
+                case 20:
+                    return new int[9] { 4, 3, 3, 3, 3, 2, 2, 1, 1 };
+                default:
+                    throw new NotSupportedException();
+            }
         }
     }
 }

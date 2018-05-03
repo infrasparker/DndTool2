@@ -151,6 +151,30 @@ namespace DnDTool2.Model
         }
     }
 
+    public class CastingTimeTypeEnumConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            string s = Enum.GetName(value.GetType(), value);
+            switch (s)
+            {
+                case "BONUS":
+                    return "1 bonus action";
+                case "ACTION":
+                    return "1 action";
+                case "REACTION":
+                    return "1 reaction";
+                default:
+                    return s.Substring(0, 1).ToUpper() + s.Substring(1).ToLower();
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class ModDisplayConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
@@ -246,10 +270,13 @@ namespace DnDTool2.Model
     {
         public object Convert(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)
         {
-            if (value.Equals(Enum.Parse(value.GetType(), (string)parameter)))
-                return Visibility.Visible;
-            else
-                return Visibility.Hidden;
+            string[] strings = ((string)parameter).Split('|');
+            foreach (string s in strings)
+            {
+                if (value.Equals(Enum.Parse(value.GetType(), s)))
+                    return Visibility.Visible;
+            }
+            return Visibility.Hidden;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, System.Globalization.CultureInfo culture)

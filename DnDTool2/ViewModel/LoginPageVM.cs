@@ -11,7 +11,6 @@ namespace DnDTool2.ViewModel
 {
     public class LoginPageVM : ViewModel
     {
-        public Window window;
         private string username, password;
 
         public RelayCommand OpenMenuCommand { get; set; }
@@ -19,9 +18,8 @@ namespace DnDTool2.ViewModel
         public string Username { get { return username; } set { this.username = value; OnPropertyChanged("Username"); } }
         public string Password { get { return password; } set { this.password = value; OnPropertyChanged("Password"); } }
 
-        public LoginPageVM(Window window, string username, string password)
+        public LoginPageVM(Window window, string username, string password) : base(window)
         {
-            this.window = window;
             this.Username = username;
             this.Password = password;
             this.OpenMenuCommand = new RelayCommand(OpenMenu);

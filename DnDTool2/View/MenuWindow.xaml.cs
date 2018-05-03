@@ -23,6 +23,7 @@ namespace DnDTool2.View
         public MenuWindow()
         {
             InitializeComponent();
+            DisplayFrame.Navigate(new MenuPage(this));
         }
     }
 }
